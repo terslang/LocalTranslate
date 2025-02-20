@@ -5,15 +5,18 @@ import QtQuick.Layouts
 ApplicationWindow {
     id: window
     width: 480
-    height: 640
+    height: 720
     visible: true
     title: qsTr("LocalTranslate")
 
-    // Fixed sizes for our UI parts.
+    // Fixed sizes for landscape mode.
     property int textAreaHeight: 150
     property int controlRowHeight: 40
-    // Total frame height equals one text area plus two control rows.
+    // In landscape, total frame height equals one text area plus two control rows.
     property int frameHeight: textAreaHeight + (2 * controlRowHeight)
+    // In portrait, let the two frames fill available height.
+    // GridLayout margins are 8 and rowSpacing is 12.
+    property int effectiveFrameHeight: isLandscape ? frameHeight : ((height - (8*2 + 12)) / 2)
 
     SystemPalette {
         id: palette
@@ -32,25 +35,24 @@ ApplicationWindow {
         rowSpacing: 12
         columnSpacing: 12
         anchors.margins: 8
-        // Two columns in landscape, one column in portrait.
+        // Two columns in landscape, one in portrait.
         columns: isLandscape ? 2 : 1
 
         // --- SOURCE FRAME ---
         Frame {
             id: sourceFrame
             Layout.fillWidth: true
-            Layout.preferredHeight: frameHeight
+            Layout.preferredHeight: effectiveFrameHeight
 
             background: Rectangle {
                 color: palette.base
                 radius: 4
             }
 
-
             contentItem: Item {
                 anchors.fill: parent
 
-                // Top control row: fixed-size ComboBox with margins.
+                // Top control row: ComboBox with margins.
                 ComboBox {
                     id: fromLangCombo
                     anchors.top: parent.top
@@ -69,24 +71,22 @@ ApplicationWindow {
                         radius: 4
                     }
 
+                    // (Delegate and contentItem definitions remain as you have them.)
                     delegate: ItemDelegate {
-                            width: fromLangCombo.width
-                            contentItem: Text {
-                                text: modelData
-                                color: palette.text
-                                font: fromLangCombo.font
-                                elide: Text.ElideRight
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
-                            background: Rectangle {
-                                color: palette.mid
-                                anchors.fill: parent
-                            }
-
-                            highlighted: fromLangCombo.highlightedIndex === index
+                        width: fromLangCombo.width
+                        contentItem: Text {
+                            text: modelData
+                            color: palette.text
+                            font: fromLangCombo.font
+                            elide: Text.ElideRight
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        background: Rectangle {
+                            color: palette.mid
+                            anchors.fill: parent
+                        }
+                        highlighted: fromLangCombo.highlightedIndex === index
                     }
-
 
                     contentItem: Text {
                         text: fromLangCombo.model[fromLangCombo.currentIndex]
@@ -107,7 +107,6 @@ ApplicationWindow {
                             implicitHeight: contentHeight
                             model: fromLangCombo.popup.visible ? fromLangCombo.delegateModel : null
                             currentIndex: fromLangCombo.highlightedIndex
-
                             ScrollIndicator.vertical: ScrollIndicator { }
                         }
 
@@ -115,7 +114,6 @@ ApplicationWindow {
                             radius: 4
                         }
                     }
-
                 }
 
                 // Middle area: ScrollView wrapping the source TextArea.
@@ -124,7 +122,9 @@ ApplicationWindow {
                     anchors.top: fromLangCombo.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: window.textAreaHeight
+                    // In landscape use the fixed textAreaHeight,
+                    // in portrait use available space (frame height minus top and bottom controls).
+                    height: isLandscape ? textAreaHeight : (effectiveFrameHeight - 2 * controlRowHeight)
 
                     TextArea {
                         id: sourceText
@@ -140,17 +140,15 @@ ApplicationWindow {
                     }
                 }
 
-                // Bottom row: Translate button aligned to the right with margins.
+                // Bottom row: Translate button aligned right with margins.
                 RowLayout {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    anchors.leftMargin: 8
                     anchors.rightMargin: 8
-                    anchors.bottomMargin: 8
+                    anchors.bottomMargin: 2
                     height: controlRowHeight
 
-                    // Spacer to push the button to the right.
                     Item { Layout.fillWidth: true }
 
                     Button {
@@ -169,14 +167,14 @@ ApplicationWindow {
                             color: palette.highlightedText
                         }
                         onClicked: {
-                            const fromLang = fromLangCombo.currentText
-                            const toLang   = toLangCombo.currentText
-                            const langPair = fromLang + toLang  // e.g. "ende" or "deen"
-                            const result = translationBridge.translate(sourceText.text, langPair)
-                            resultText.text = result
+                            if (sourceText.text.trim() === "") return;
+                            const fromLang = fromLangCombo.currentText;
+                            const toLang   = toLangCombo.currentText;
+                            const langPair = fromLang + toLang;  // e.g. "ende" or "deen"
+                            const result = translationBridge.translate(sourceText.text, langPair);
+                            resultText.text = result;
                         }
                     }
-
                 }
             }
         }
@@ -185,7 +183,7 @@ ApplicationWindow {
         Frame {
             id: resultFrame
             Layout.fillWidth: true
-            Layout.preferredHeight: frameHeight
+            Layout.preferredHeight: effectiveFrameHeight
 
             background: Rectangle {
                 color: palette.base
@@ -195,7 +193,7 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
-                // Top control row: fixed-size ComboBox with margins.
+                // Top control row: ComboBox with margins.
                 ComboBox {
                     id: toLangCombo
                     anchors.top: parent.top
@@ -203,7 +201,7 @@ ApplicationWindow {
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
                     height: controlRowHeight
-                    width: 120   // fixed width so it doesn’t expand
+                    width: 120
                     model: ["en", "de", "fr", "es", "ja"]
                     currentIndex: 1
 
@@ -222,21 +220,19 @@ ApplicationWindow {
                     }
 
                     delegate: ItemDelegate {
-                            width: toLangCombo.width
-                            contentItem: Text {
-                                text: modelData
-                                color: palette.text
-                                font: toLangCombo.font
-                                elide: Text.ElideRight
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
-                            background: Rectangle {
-                                color: palette.mid
-                                anchors.fill: parent
-                            }
-
-                            highlighted: toLangCombo.highlightedIndex === index
+                        width: toLangCombo.width
+                        contentItem: Text {
+                            text: modelData
+                            color: palette.text
+                            font: toLangCombo.font
+                            elide: Text.ElideRight
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        background: Rectangle {
+                            color: palette.mid
+                            anchors.fill: parent
+                        }
+                        highlighted: toLangCombo.highlightedIndex === index
                     }
 
                     popup: Popup {
@@ -250,10 +246,8 @@ ApplicationWindow {
                             implicitHeight: contentHeight
                             model: toLangCombo.popup.visible ? toLangCombo.delegateModel : null
                             currentIndex: toLangCombo.highlightedIndex
-
                             ScrollIndicator.vertical: ScrollIndicator { }
                         }
-
                         background: Rectangle {
                             radius: 4
                         }
@@ -266,7 +260,7 @@ ApplicationWindow {
                     anchors.top: toLangCombo.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: window.textAreaHeight
+                    height: isLandscape ? textAreaHeight : (effectiveFrameHeight - 2 * controlRowHeight)
 
                     TextArea {
                         id: resultText
@@ -282,7 +276,7 @@ ApplicationWindow {
                     }
                 }
 
-                // Bottom dummy row to match the overall frame height.
+                // Bottom dummy row to match overall frame height.
                 Rectangle {
                     anchors.left: parent.left
                     anchors.right: parent.right

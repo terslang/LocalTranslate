@@ -18,6 +18,14 @@ ApplicationWindow {
     // GridLayout margins are 8 and rowSpacing is 12.
     property int effectiveFrameHeight: isLandscape ? frameHeight : ((height - (8*2 + 12)) / 2)
 
+    property var languages:
+        ["bg", "bs", "ca", "cs", "da", "de", "el",
+        "en", "es", "et", "fa", "fi", "fr", "hr",
+        "hu", "id", "is", "it", "ja", "ko", "lt",
+        "lv", "mt", "nb", "nl", "nn", "pl", "pt",
+        "ro", "ru", "sk", "sl", "sr", "sv", "tr",
+        "uk", "vi", "zh"]
+
     SystemPalette {
         id: palette
         colorGroup: SystemPalette.Active
@@ -61,8 +69,8 @@ ApplicationWindow {
                     anchors.leftMargin: 8
                     height: controlRowHeight
                     width: 120
-                    model: ["en", "de", "fr", "es"]
-                    currentIndex: 0
+                    model: languages
+                    currentIndex: 7
                     palette: window.palette
 
                     background: Rectangle {
@@ -202,8 +210,8 @@ ApplicationWindow {
                     anchors.leftMargin: 8
                     height: controlRowHeight
                     width: 120
-                    model: ["en", "de", "fr", "es", "ja"]
-                    currentIndex: 1
+                    model: languages
+                    currentIndex: 5
 
                     background: Rectangle {
                         anchors.fill: parent
@@ -265,7 +273,6 @@ ApplicationWindow {
                     TextArea {
                         id: resultText
                         width: resultScrollView.width
-                        height: resultScrollView.height
                         placeholderText: qsTr("Translation will appear here")
                         placeholderTextColor: palette.placeholderText
                         wrapMode: TextEdit.Wrap

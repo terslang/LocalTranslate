@@ -9,22 +9,24 @@ ApplicationWindow {
     visible: true
     title: qsTr("LocalTranslate")
 
+    // Define one common language model for both ComboBoxes.
+    property var languages: [
+        "bg", "bs", "ca", "cs", "da", "de", "el",
+        "en", "es", "et", "fa", "fi", "fr", "hr",
+        "hu", "id", "is", "it", "ja", "ko", "lt",
+        "lv", "mt", "nb", "nl", "nn", "pl", "pt",
+        "ro", "ru", "sk", "sl", "sr", "sv", "tr",
+        "uk", "vi", "zh"
+    ]
+
     // Fixed sizes for landscape mode.
-    property int textAreaHeight: 150
-    property int controlRowHeight: 40
+    property int textAreaHeight: 250
+    property int controlRowHeight: 50
     // In landscape, total frame height equals one text area plus two control rows.
     property int frameHeight: textAreaHeight + (2 * controlRowHeight)
     // In portrait, let the two frames fill available height.
     // GridLayout margins are 8 and rowSpacing is 12.
     property int effectiveFrameHeight: isLandscape ? frameHeight : ((height - (8*2 + 12)) / 2)
-
-    property var languages:
-        ["bg", "bs", "ca", "cs", "da", "de", "el",
-        "en", "es", "et", "fa", "fi", "fr", "hr",
-        "hu", "id", "is", "it", "ja", "ko", "lt",
-        "lv", "mt", "nb", "nl", "nn", "pl", "pt",
-        "ro", "ru", "sk", "sl", "sr", "sv", "tr",
-        "uk", "vi", "zh"]
 
     SystemPalette {
         id: palette
@@ -43,7 +45,7 @@ ApplicationWindow {
         rowSpacing: 12
         columnSpacing: 12
         anchors.margins: 8
-        // Two columns in landscape, one in portrait.
+        // Two columns in landscape, one column in portrait.
         columns: isLandscape ? 2 : 1
 
         // --- SOURCE FRAME ---
@@ -60,7 +62,7 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
-                // Top control row: ComboBox with margins.
+                // Top control row: ComboBox using the common model.
                 ComboBox {
                     id: fromLangCombo
                     anchors.top: parent.top
@@ -70,6 +72,7 @@ ApplicationWindow {
                     height: controlRowHeight
                     width: 120
                     model: languages
+                    // Default to "en" (index 7 in our array).
                     currentIndex: 7
                     palette: window.palette
 
@@ -79,7 +82,6 @@ ApplicationWindow {
                         radius: 4
                     }
 
-                    // (Delegate and contentItem definitions remain as you have them.)
                     delegate: ItemDelegate {
                         width: fromLangCombo.width
                         contentItem: Text {
@@ -100,7 +102,6 @@ ApplicationWindow {
                         text: fromLangCombo.model[fromLangCombo.currentIndex]
                         anchors.centerIn: parent
                         color: palette.text
-                        font.pixelSize: 16
                         verticalAlignment: Text.AlignVCenter
                     }
 
@@ -109,7 +110,6 @@ ApplicationWindow {
                         width: fromLangCombo.width
                         implicitHeight: contentItem.implicitHeight
                         padding: 0
-
                         contentItem: ListView {
                             clip: true
                             implicitHeight: contentHeight
@@ -117,7 +117,6 @@ ApplicationWindow {
                             currentIndex: fromLangCombo.highlightedIndex
                             ScrollIndicator.vertical: ScrollIndicator { }
                         }
-
                         background: Rectangle {
                             radius: 4
                         }
@@ -130,8 +129,6 @@ ApplicationWindow {
                     anchors.top: fromLangCombo.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    // In landscape use the fixed textAreaHeight,
-                    // in portrait use available space (frame height minus top and bottom controls).
                     height: isLandscape ? textAreaHeight : (effectiveFrameHeight - 2 * controlRowHeight)
 
                     TextArea {
@@ -148,17 +145,37 @@ ApplicationWindow {
                     }
                 }
 
-                // Bottom row: Translate button aligned right with margins.
+                // Bottom row: Contains a Paste button and the Translate button.
                 RowLayout {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     anchors.rightMargin: 8
+                    anchors.leftMargin: 8
                     anchors.bottomMargin: 2
                     height: controlRowHeight
 
+                    // Paste button.
+                    Button {
+                        id: pasteButton
+                        width: controlRowHeight
+                        height: controlRowHeight
+                        icon.name: "edit-paste"
+                        icon.color: "transparent"
+                        background: Rectangle {
+                            anchors.fill: parent
+                            color: palette.button
+                            radius: 4
+                        }
+                        onClicked: {
+                            sourceText.paste()
+                        }
+                    }
+
+                    // Spacer.
                     Item { Layout.fillWidth: true }
 
+                    // Translate button.
                     Button {
                         id: translateButton
                         text: qsTr("Translate")
@@ -178,7 +195,7 @@ ApplicationWindow {
                             if (sourceText.text.trim() === "") return;
                             const fromLang = fromLangCombo.currentText;
                             const toLang   = toLangCombo.currentText;
-                            const langPair = fromLang + toLang;  // e.g. "ende" or "deen"
+                            const langPair = fromLang + toLang;
                             const result = translationBridge.translate(sourceText.text, langPair);
                             resultText.text = result;
                         }
@@ -201,7 +218,7 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
-                // Top control row: ComboBox with margins.
+                // Top control row: ComboBox using the common model.
                 ComboBox {
                     id: toLangCombo
                     anchors.top: parent.top
@@ -211,6 +228,7 @@ ApplicationWindow {
                     height: controlRowHeight
                     width: 120
                     model: languages
+                    // Default to "de" (index 5 in our array).
                     currentIndex: 5
 
                     background: Rectangle {
@@ -223,7 +241,6 @@ ApplicationWindow {
                         text: toLangCombo.model[toLangCombo.currentIndex]
                         anchors.centerIn: parent
                         color: palette.text
-                        font.pixelSize: 14
                         verticalAlignment: Text.AlignVCenter
                     }
 
@@ -248,7 +265,6 @@ ApplicationWindow {
                         width: toLangCombo.width
                         implicitHeight: contentItem.implicitHeight
                         padding: 0
-
                         contentItem: ListView {
                             clip: true
                             implicitHeight: contentHeight
@@ -269,7 +285,6 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     height: isLandscape ? textAreaHeight : (effectiveFrameHeight - 2 * controlRowHeight)
-
                     TextArea {
                         id: resultText
                         width: resultScrollView.width
@@ -279,17 +294,38 @@ ApplicationWindow {
                         color: palette.text
                         background: null
                         readOnly: true
+                        selectByMouse: true
                         clip: true
                     }
                 }
 
-                // Bottom dummy row to match overall frame height.
-                Rectangle {
+                // Bottom row: Contains a Copy button.
+                RowLayout {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
+                    anchors.leftMargin: 8
+                    anchors.rightMargin: 8
+                    anchors.bottomMargin: 2
                     height: controlRowHeight
-                    color: "transparent"
+
+                    Item { Layout.fillWidth: true }
+
+                    Button {
+                        id: copyButton
+                        width: controlRowHeight
+                        height: controlRowHeight
+                        background: Rectangle {
+                            anchors.fill: parent
+                            color: palette.button
+                            radius: 4
+                        }
+                        icon.name: "edit-copy"
+                        icon.color: "transparent"
+                        onClicked: {
+                            resultText.copy()
+                        }
+                    }
                 }
             }
         }

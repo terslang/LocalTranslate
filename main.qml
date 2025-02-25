@@ -126,13 +126,10 @@ ApplicationWindow {
                     anchors.bottom: parent.bottom
                     anchors.rightMargin: 8
                     anchors.leftMargin: 8
-                    anchors.bottomMargin: 2
                     height: controlRowHeight
 
                     Button {
                         id: pasteButton
-                        width: controlRowHeight
-                        height: controlRowHeight
                         icon.name: "edit-paste"
                         icon.color: "transparent"
                         background: Rectangle {
@@ -140,6 +137,7 @@ ApplicationWindow {
                             color: palette.button
                             radius: 4
                         }
+                        padding: 8
                         onClicked: sourceText.paste()
                     }
 
@@ -160,6 +158,7 @@ ApplicationWindow {
                             verticalAlignment: Text.AlignVCenter
                             color: palette.highlightedText
                         }
+                        padding: 8
                         onClicked: {
                             if (sourceText.text.trim() === "") return
 
@@ -229,15 +228,12 @@ ApplicationWindow {
                     anchors.bottom: parent.bottom
                     anchors.leftMargin: 8
                     anchors.rightMargin: 8
-                    anchors.bottomMargin: 2
                     height: controlRowHeight
 
                     Item { Layout.fillWidth: true }
 
                     Button {
                         id: copyButton
-                        width: controlRowHeight
-                        height: controlRowHeight
                         background: Rectangle {
                             anchors.fill: parent
                             color: palette.button
@@ -245,6 +241,7 @@ ApplicationWindow {
                         }
                         icon.name: "edit-copy"
                         icon.color: "transparent"
+                        padding: 8
                         onClicked: resultText.copy()
                     }
                 }

@@ -1,4 +1,5 @@
 # LocalTranslate
+<img width="150px" src="desktop/localtranslate.png" align="right">
 Translate offline using Firefox Translation Models
 
 ## Screenshots

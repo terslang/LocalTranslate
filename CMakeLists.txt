@@ -18,7 +18,7 @@ qt_add_executable(appLocalTranslate
 qt_add_qml_module(appLocalTranslate
     URI LocalTranslate
     VERSION 1.0
-    QML_FILES main.qml 
+    QML_FILES main.qml SearchableComboBox.qml
 )
 
 set_target_properties(appLocalTranslate PROPERTIES

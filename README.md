@@ -2,4 +2,4 @@
 Translate offline using Firefox Translation Models
 
 ## Screenshots
-![lt](https://github.com/user-attachments/assets/52e778b7-e13c-43f3-ab9f-f11d8cdc35b6)
+![localtranslate-landscape](https://github.com/user-attachments/assets/dc250178-e9a4-4401-8105-3205bfd226b2)

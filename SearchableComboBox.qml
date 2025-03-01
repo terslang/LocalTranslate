@@ -1,29 +1,22 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 ComboBox {
-    id: control
+    id: combo
 
-    property var imodel
-    property string displayRole: "name"
-    property string selectedCode: ""
+    property var imodel: []
 
-    // Filter logic
-    model: imodel
-           ? imodel.filter(function(item) {
-               let typed = filterConditionText ? filterConditionText.text.trim().toLowerCase() : ""
-               if (typed.length > 0) {
-                   let val = String(item[displayRole] || "").toLowerCase()
-                   return val.includes(typed)
-               }
-               return true
-           })
-           : []
+    property var filteredModel: []
+
+    property string filterText: ""
+
+    model: filteredModel
 
     popup: Popup {
         id: comboPopup
-        y: control.height - 1
-        width: control.width
+        y: combo.height - 1
+        width: combo.width
         padding: 1
 
         onVisibleChanged: {
@@ -62,7 +55,7 @@ ComboBox {
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     height: 1
-                    color: control.activeFocus ? palette.highlight : palette.mid
+                    color: combo.activeFocus ? palette.highlight : palette.mid
                 }
 
                 // Capture arrow keys & Enter
@@ -75,8 +68,8 @@ ComboBox {
                         event.accepted = true;
                     } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                         if (listView.currentIndex >= 0 && listView.currentIndex < listView.count) {
-                            var itemData = control.model[listView.currentIndex];
-                            control.selectedCode = itemData.code;
+                            var itemData = combo.model[listView.currentIndex];
+                            combo.selectedCode = itemData.code;
                             comboPopup.close();
                         }
                         event.accepted = true;
@@ -92,7 +85,7 @@ ComboBox {
                 anchors.right: parent.right
                 anchors.top: filterConditionText.bottom
                 clip: true
-                model: comboPopup.visible ? control.delegateModel : null
+                model: combo.delegateModel
                 focus: true
                 highlightFollowsCurrentItem: true
                 height: Math.min(contentHeight, 350)
@@ -102,12 +95,17 @@ ComboBox {
         }
     }
 
+
     delegate: ItemDelegate {
-        width: control.width
-        height: Math.max(control.height, 35)
+        width: combo.width
+
+        onClicked: {
+            combo.currentIndex = index
+            combo.popup.close()
+        }
 
         contentItem: Text {
-            text: modelData ? modelData[displayRole] : ""
+            text: modelData
             font.pointSize: 12
             verticalAlignment: Text.AlignVCenter
             color: palette.text
@@ -139,20 +137,36 @@ ComboBox {
         }
     }
 
-    // Main ComboBox text area (displays the chosen item).
     contentItem: Text {
         text: {
-            if (!imodel || !control.selectedCode) return ""
-            let found = imodel.find(item => item.code === control.selectedCode)
-            return found ? found[displayRole] : ""
+            if (combo.currentIndex < 0 || combo.currentIndex >= combo.model.length) return ""
+            return combo.model[combo.currentIndex]
         }
         color: palette.text
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignLeft
-        elide: Text.ElideRight
+        anchors.centerIn: parent
+        horizontalAlignment: Label.AlignLeft
+        verticalAlignment: Label.AlignVCenter
         anchors.left: parent.left
         anchors.leftMargin: 8
-        anchors.verticalCenter: parent.verticalCenter
+        elide: Text.ElideRight
+    }
+
+    onImodelChanged: recalcFilter()
+    onFilterTextChanged: recalcFilter()
+
+    function recalcFilter() {
+        if (!imodel || imodel.length === 0) {
+            filteredModel = []
+            return
+        }
+        let typed = filterText.trim().toLowerCase()
+        if (typed.length === 0) {
+            filteredModel = imodel
+        } else {
+            filteredModel = imodel.filter(function(item) {
+                return item.toLowerCase().includes(typed)
+            })
+        }
     }
 
     background: Rectangle {

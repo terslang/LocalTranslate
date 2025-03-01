@@ -10,6 +10,7 @@ ApplicationWindow {
     visible: true
     title: qsTr("LocalTranslate")
 
+    // The original array of objects with code + name
     property var languages: [
         { code: "bg", name: "Bulgarian" },
         { code: "bs", name: "Bosnian" },
@@ -51,11 +52,16 @@ ApplicationWindow {
         { code: "zh", name: "Chinese" }
     ]
 
+    // Build a plain string list of language names
+    property var languageNames: languages.map(lang => lang.name)
+
     property int textAreaHeight: 250
     property int controlRowHeight: 50
     property int frameHeight: textAreaHeight + 2 * controlRowHeight
     property bool isLandscape: width > height
-    property int effectiveFrameHeight: isLandscape ? frameHeight : ((height - (8*2 + 12)) / 2)
+    property int effectiveFrameHeight: isLandscape
+        ? frameHeight
+        : ((height - (8 * 2 + 12)) / 2)
 
     onWidthChanged: isLandscape = (width > height)
     onHeightChanged: isLandscape = (width > height)
@@ -73,7 +79,7 @@ ApplicationWindow {
         anchors.margins: 8
         columns: isLandscape ? 2 : 1
 
-        // --- SOURCE FRAME ---
+        // === SOURCE FRAME ===
         Frame {
             Layout.fillWidth: true
             Layout.preferredHeight: effectiveFrameHeight
@@ -85,6 +91,8 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
+                // Use the simplified SearchableComboBox,
+                // passing a plain string list (languageNames).
                 SearchableComboBox {
                     id: fromLangCombo
                     width: 200
@@ -93,9 +101,12 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
-                    imodel: languages
-                    displayRole: "name"
-                    selectedCode: languages[7].code   // "en"
+
+                    // Provide a simple string list to imodel
+                    imodel: window.languageNames
+
+                    // Default selection index => "English" (which is index 7 in the languageNames array).
+                    currentIndex: 7
                 }
 
                 ScrollView {
@@ -104,7 +115,9 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    height: isLandscape ? textAreaHeight : (effectiveFrameHeight - 2 * controlRowHeight)
+                    height: isLandscape
+                        ? textAreaHeight
+                        : (effectiveFrameHeight - 2 * controlRowHeight)
 
                     TextArea {
                         id: sourceText
@@ -126,6 +139,7 @@ ApplicationWindow {
                     anchors.bottom: parent.bottom
                     anchors.rightMargin: 8
                     anchors.leftMargin: 8
+                    anchors.bottomMargin: 2
                     height: controlRowHeight
 
                     Button {
@@ -162,9 +176,18 @@ ApplicationWindow {
                         onClicked: {
                             if (sourceText.text.trim() === "") return
 
-                            let fromLangCode = fromLangCombo.selectedCode !== "" ? fromLangCombo.selectedCode : "en"
-                            let toLangCode = toLangCombo.selectedCode !== "" ? toLangCombo.selectedCode : "de"
+                            // 1) Get selected "name" from fromLangCombo
+                            let fromName = languageNames[fromLangCombo.currentIndex]
+                            // 2) Find the corresponding object
+                            let fromObj = languages.find(lang => lang.name === fromName)
+                            let fromLangCode = fromObj ? fromObj.code : "en"
 
+                            // 3) Do the same for toLangCombo
+                            let toName = languageNames[toLangCombo.currentIndex]
+                            let toObj = languages.find(lang => lang.name === toName)
+                            let toLangCode = toObj ? toObj.code : "de"
+
+                            // 4) Construct the language pair
                             let langPair = fromLangCode + toLangCode
                             let result = translationBridge.translate(sourceText.text, langPair)
                             resultText.text = result
@@ -174,7 +197,7 @@ ApplicationWindow {
             }
         }
 
-        // --- RESULT FRAME ---
+        // === RESULT FRAME ===
         Frame {
             Layout.fillWidth: true
             Layout.preferredHeight: effectiveFrameHeight
@@ -194,10 +217,12 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
-                    imodel: languages
-                    displayRole: "name"
-                    palette: window.palette
-                    selectedCode: languages[5].code   // "de"
+
+                    // Pass the same string list.
+                    imodel: window.languageNames
+
+                    // Default to "German" => index 5
+                    currentIndex: 5
                 }
 
                 ScrollView {
@@ -206,7 +231,9 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    height: isLandscape ? textAreaHeight : (effectiveFrameHeight - 2 * controlRowHeight)
+                    height: isLandscape
+                        ? textAreaHeight
+                        : (effectiveFrameHeight - 2 * controlRowHeight)
 
                     TextArea {
                         id: resultText
@@ -228,6 +255,7 @@ ApplicationWindow {
                     anchors.bottom: parent.bottom
                     anchors.leftMargin: 8
                     anchors.rightMargin: 8
+                    anchors.bottomMargin: 2
                     height: controlRowHeight
 
                     Item { Layout.fillWidth: true }

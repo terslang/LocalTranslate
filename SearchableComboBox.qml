@@ -1,101 +1,65 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 ComboBox {
-    id: control
+    id: combo
 
-    property var imodel
-    property string displayRole: "name"
-    property string selectedCode: ""
+    property var imodel: []
 
-    // Filter logic
-    model: imodel
-           ? imodel.filter(function(item) {
-               let typed = filterConditionText ? filterConditionText.text.trim().toLowerCase() : ""
-               if (typed.length > 0) {
-                   let val = String(item[displayRole] || "").toLowerCase()
-                   return val.includes(typed)
-               }
-               return true
-           })
-           : []
+    property var filteredModel: []
+
+    property string filterText: ""
+
+    model: filteredModel
 
     popup: Popup {
         id: comboPopup
-        y: control.height - 1
-        width: control.width
-        padding: 1
+        y: combo.height
+        width: combo.width
 
         onVisibleChanged: {
-            if (visible) {
-                // Force the filter field to take focus as soon as the popup appears.
-                filterConditionText.forceActiveFocus();
-            }
+            if (visible) filterField.forceActiveFocus()
         }
 
-        contentItem: Item {
+        contentItem: ColumnLayout {
             anchors.fill: parent
+            spacing: 4
 
-            TextArea {
-                id: filterConditionText
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                height: 35
-
-                // Prevent multi-line input
-                wrapMode: TextEdit.NoWrap
-
+            // --- Filter field ---
+            TextField {
+                id: filterField
                 placeholderText: qsTr("Filter…")
-                placeholderTextColor: parent.palette.placeholderText
-                color: parent.palette.text
-                selectionColor: parent.palette.highlight
-                selectedTextColor: parent.palette.highlightedText
-                focus: true
+                Layout.fillWidth: true
 
-                background: Rectangle {
-                    anchors.fill: parent
-                    color: palette.base
-                }
-                Rectangle {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    height: 1
-                    color: control.activeFocus ? palette.highlight : palette.mid
-                }
+                onTextChanged: combo.filterText = text
 
-                // Capture arrow keys & Enter
                 Keys.onPressed: function(event) {
                     if (event.key === Qt.Key_Down) {
-                        listView.currentIndex = Math.min(listView.currentIndex + 1, listView.count - 1);
-                        event.accepted = true;
+                        listView.currentIndex = Math.min(listView.currentIndex + 1, listView.count - 1)
+                        event.accepted = true
                     } else if (event.key === Qt.Key_Up) {
-                        listView.currentIndex = Math.max(listView.currentIndex - 1, 0);
-                        event.accepted = true;
+                        listView.currentIndex = Math.max(listView.currentIndex - 1, 0)
+                        event.accepted = true
                     } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                         if (listView.currentIndex >= 0 && listView.currentIndex < listView.count) {
-                            var itemData = control.model[listView.currentIndex];
-                            control.selectedCode = itemData.code;
-                            comboPopup.close();
+                            combo.currentIndex = listView.currentIndex
+                            combo.popup.close()
                         }
-                        event.accepted = true;
+                        event.accepted = true
                     }
                 }
-
-
             }
 
             ListView {
                 id: listView
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: filterConditionText.bottom
+                Layout.fillWidth: true
+                Layout.preferredHeight: Math.min(contentHeight, 200)
+
                 clip: true
-                model: comboPopup.visible ? control.delegateModel : null
-                focus: true
                 highlightFollowsCurrentItem: true
-                height: Math.min(contentHeight, 350)
+                model: combo.delegateModel
+                focus: true
 
                 ScrollIndicator.vertical: ScrollIndicator { }
             }
@@ -103,63 +67,51 @@ ComboBox {
     }
 
     delegate: ItemDelegate {
-        width: control.width
-        height: Math.max(control.height, 35)
+        width: combo.width
+        text: modelData
 
-        contentItem: Text {
-            text: modelData ? modelData[displayRole] : ""
-            font.pointSize: 12
-            verticalAlignment: Text.AlignVCenter
-            color: palette.text
-            elide: Text.ElideRight
-            anchors.verticalCenter: parent.verticalCenter
-            leftPadding: 10
-        }
-
-        background: Rectangle {
-            color: highlighted ? Qt.lighter(palette.base, 1.25) : palette.base
-            anchors.fill: parent
-        }
-
-        highlighted: ListView.isCurrentItem
-
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-
-            onEntered: {
-                listView.currentIndex = index
-            }
-
-            onClicked: {
-                listView.currentIndex = index
-                control.selectedCode = modelData.code
-                control.popup.close()
-            }
+        onClicked: {
+            combo.currentIndex = index
+            combo.popup.close()
         }
     }
 
-    // Main ComboBox text area (displays the chosen item).
-    contentItem: Text {
+    contentItem: Label {
         text: {
-            if (!imodel || !control.selectedCode) return ""
-            let found = imodel.find(item => item.code === control.selectedCode)
-            return found ? found[displayRole] : ""
+            if (combo.currentIndex < 0 || combo.currentIndex >= combo.model.length) return ""
+            return combo.model[combo.currentIndex]
         }
-        color: palette.text
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignLeft
+        anchors.centerIn: parent
+        horizontalAlignment: Label.AlignLeft
+        verticalAlignment: Label.AlignVCenter
         elide: Text.ElideRight
-        anchors.left: parent.left
-        anchors.leftMargin: 8
-        anchors.verticalCenter: parent.verticalCenter
     }
+
+    onImodelChanged: recalcFilter()
+    onFilterTextChanged: recalcFilter()
+
+    function recalcFilter() {
+        if (!imodel || imodel.length === 0) {
+            filteredModel = []
+            return
+        }
+        let typed = filterText.trim().toLowerCase()
+        if (typed.length === 0) {
+            filteredModel = imodel
+        } else {
+            filteredModel = imodel.filter(function(item) {
+                return item.toLowerCase().includes(typed)
+            })
+        }
+    }
+
+    // Default size
+    width: 200
+    height: 32
 
     background: Rectangle {
         anchors.fill: parent
-        color: palette.mid
         radius: 4
+        color: combo.palette.base
     }
-
-    height: 40
 }

@@ -15,75 +15,139 @@ ComboBox {
 
     popup: Popup {
         id: comboPopup
-        y: combo.height
+        y: combo.height - 1
         width: combo.width
+        padding: 1
 
         onVisibleChanged: {
-            if (visible) filterField.forceActiveFocus()
+            if (visible) {
+                // Force the filter field to take focus as soon as the popup appears.
+                filterConditionText.forceActiveFocus();
+            }
         }
 
-        contentItem: ColumnLayout {
+        contentItem: Item {
             anchors.fill: parent
-            spacing: 4
 
-            // --- Filter field ---
-            TextField {
-                id: filterField
+            TextArea {
+                id: filterConditionText
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                height: 35
+
+                // Prevent multi-line input
+                wrapMode: TextEdit.NoWrap
+
                 placeholderText: qsTr("Filter…")
-                Layout.fillWidth: true
+                placeholderTextColor: parent.palette.placeholderText
+                color: parent.palette.text
+                selectionColor: parent.palette.highlight
+                selectedTextColor: parent.palette.highlightedText
+                focus: true
 
-                onTextChanged: combo.filterText = text
+                background: Rectangle {
+                    anchors.fill: parent
+                    color: palette.base
+                }
+                Rectangle {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    height: 1
+                    color: combo.activeFocus ? palette.highlight : palette.mid
+                }
 
+                // Capture arrow keys & Enter
                 Keys.onPressed: function(event) {
                     if (event.key === Qt.Key_Down) {
-                        listView.currentIndex = Math.min(listView.currentIndex + 1, listView.count - 1)
-                        event.accepted = true
+                        listView.currentIndex = Math.min(listView.currentIndex + 1, listView.count - 1);
+                        event.accepted = true;
                     } else if (event.key === Qt.Key_Up) {
-                        listView.currentIndex = Math.max(listView.currentIndex - 1, 0)
-                        event.accepted = true
+                        listView.currentIndex = Math.max(listView.currentIndex - 1, 0);
+                        event.accepted = true;
                     } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                         if (listView.currentIndex >= 0 && listView.currentIndex < listView.count) {
-                            combo.currentIndex = listView.currentIndex
-                            combo.popup.close()
+                            var itemData = combo.model[listView.currentIndex];
+                            combo.selectedCode = itemData.code;
+                            comboPopup.close();
                         }
-                        event.accepted = true
+                        event.accepted = true;
                     }
                 }
+
+
             }
 
             ListView {
                 id: listView
-                Layout.fillWidth: true
-                Layout.preferredHeight: Math.min(contentHeight, 200)
-
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: filterConditionText.bottom
                 clip: true
-                highlightFollowsCurrentItem: true
                 model: combo.delegateModel
                 focus: true
+                highlightFollowsCurrentItem: true
+                height: Math.min(contentHeight, 350)
 
                 ScrollIndicator.vertical: ScrollIndicator { }
             }
         }
     }
 
+
     delegate: ItemDelegate {
         width: combo.width
-        text: modelData
 
         onClicked: {
             combo.currentIndex = index
             combo.popup.close()
         }
+
+        contentItem: Text {
+            text: modelData
+            font.pointSize: 12
+            verticalAlignment: Text.AlignVCenter
+            color: palette.text
+            elide: Text.ElideRight
+            anchors.verticalCenter: parent.verticalCenter
+            leftPadding: 10
+        }
+
+        background: Rectangle {
+            color: highlighted ? Qt.lighter(palette.base, 1.25) : palette.base
+            anchors.fill: parent
+        }
+
+        highlighted: ListView.isCurrentItem
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+
+            onEntered: {
+                listView.currentIndex = index
+            }
+
+            onClicked: {
+                listView.currentIndex = index
+                control.selectedCode = modelData.code
+                control.popup.close()
+            }
+        }
     }
 
-    contentItem: Label {
+    contentItem: Text {
         text: {
             if (combo.currentIndex < 0 || combo.currentIndex >= combo.model.length) return ""
             return combo.model[combo.currentIndex]
         }
+        color: palette.text
         anchors.centerIn: parent
         horizontalAlignment: Label.AlignLeft
         verticalAlignment: Label.AlignVCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 8
         elide: Text.ElideRight
     }
 
@@ -105,13 +169,11 @@ ComboBox {
         }
     }
 
-    // Default size
-    width: 200
-    height: 32
-
     background: Rectangle {
         anchors.fill: parent
+        color: palette.mid
         radius: 4
-        color: combo.palette.base
     }
+
+    height: 40
 }

@@ -91,8 +91,6 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
-                // Use the simplified SearchableComboBox,
-                // passing a plain string list (languageNames).
                 SearchableComboBox {
                     id: fromLangCombo
                     width: 200
@@ -102,10 +100,9 @@ ApplicationWindow {
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
 
-                    // Provide a simple string list to imodel
                     imodel: window.languageNames
 
-                    // Default selection index => "English" (which is index 7 in the languageNames array).
+                    // Default selection index => "English"
                     currentIndex: 7
                 }
 

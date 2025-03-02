@@ -35,6 +35,7 @@ ComboBox {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 height: 35
+                onTextChanged: combo.filterText = text
 
                 // Prevent multi-line input
                 wrapMode: TextEdit.NoWrap
@@ -61,21 +62,19 @@ ComboBox {
                 // Capture arrow keys & Enter
                 Keys.onPressed: function(event) {
                     if (event.key === Qt.Key_Down) {
-                        listView.currentIndex = Math.min(listView.currentIndex + 1, listView.count - 1);
-                        event.accepted = true;
+                        listView.currentIndex = Math.min(listView.currentIndex + 1, listView.count - 1)
+                        event.accepted = true
                     } else if (event.key === Qt.Key_Up) {
-                        listView.currentIndex = Math.max(listView.currentIndex - 1, 0);
-                        event.accepted = true;
+                        listView.currentIndex = Math.max(listView.currentIndex - 1, 0)
+                        event.accepted = true
                     } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                         if (listView.currentIndex >= 0 && listView.currentIndex < listView.count) {
-                            var itemData = combo.model[listView.currentIndex];
-                            combo.selectedCode = itemData.code;
-                            comboPopup.close();
+                            combo.currentIndex = listView.currentIndex
+                            combo.popup.close()
                         }
-                        event.accepted = true;
+                        event.accepted = true
                     }
                 }
-
 
             }
 
@@ -98,11 +97,6 @@ ComboBox {
 
     delegate: ItemDelegate {
         width: combo.width
-
-        onClicked: {
-            combo.currentIndex = index
-            combo.popup.close()
-        }
 
         contentItem: Text {
             text: modelData
@@ -131,8 +125,8 @@ ComboBox {
 
             onClicked: {
                 listView.currentIndex = index
-                control.selectedCode = modelData.code
-                control.popup.close()
+                combo.currentIndex = listView.currentIndex
+                combo.popup.close()
             }
         }
     }

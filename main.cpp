@@ -6,8 +6,10 @@
 #include <QDir>
 #include <kotki/kotki.h>
 #include <memory>
+#include <unicode/translit.h>
+#include <unicode/unistr.h>
+#include <memory>
 
-// QObject wrapper for kotki
 class TranslationBridge : public QObject
 {
     Q_OBJECT
@@ -29,8 +31,25 @@ public:
     Q_INVOKABLE QString translate(const QString &text, const QString &langPair)
     {
         std::string result = kotki->translate(text.toStdString(), langPair.toStdString());
-        if(result.empty())return "Language pair \"" + langPair + "\" not available.";
+        if(result.empty())
+            return "Language pair \"" + langPair + "\" not available.";
         return QString::fromStdString(result);
+    }
+
+    Q_INVOKABLE QString transliterate(const QString &text, const QString &langCode)
+    {
+        UErrorCode status = U_ZERO_ERROR;
+        std::unique_ptr<icu::Transliterator> trans(icu::Transliterator::createInstance("Any-Latin; Latin-ASCII", UTRANS_FORWARD, status));
+        if (U_FAILURE(status) || !trans) {
+            qWarning() << "Failed to create transliterator:" << u_errorName(status);
+            return "";
+        }
+        std::string input = text.toStdString();
+        icu::UnicodeString uText = icu::UnicodeString::fromUTF8(input);
+        trans->transliterate(uText);
+        std::string output;
+        uText.toUTF8String(output);
+        return QString::fromStdString(output);
     }
 
 private:
@@ -38,6 +57,7 @@ private:
 };
 
 #include "main.moc"
+
 
 int main(int argc, char *argv[])
 {

@@ -60,8 +60,8 @@ ApplicationWindow {
     property int frameHeight: textAreaHeight + 2 * controlRowHeight
     property bool isLandscape: width > height
     property int effectiveFrameHeight: isLandscape
-        ? frameHeight
-        : ((height - (8 * 2 + 12)) / 2)
+                                       ? frameHeight
+                                       : ((height - (8 * 2 + 12)) / 2)
 
     onWidthChanged: isLandscape = (width > height)
     onHeightChanged: isLandscape = (width > height)
@@ -113,8 +113,8 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.topMargin: 4
                     height: isLandscape
-                        ? textAreaHeight
-                        : (effectiveFrameHeight - 2 * controlRowHeight)
+                            ? textAreaHeight
+                            : (effectiveFrameHeight - 2 * controlRowHeight)
 
                     TextArea {
                         id: sourceText
@@ -229,8 +229,8 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.topMargin: 4
                     height: isLandscape
-                        ? textAreaHeight
-                        : (effectiveFrameHeight - 2 * controlRowHeight)
+                            ? textAreaHeight
+                            : (effectiveFrameHeight - 2 * controlRowHeight)
 
                     TextArea {
                         id: resultText
@@ -246,7 +246,34 @@ ApplicationWindow {
                     }
                 }
 
+                Text {
+                    id: transliterationText
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: bottomRow.top
+                    wrapMode: TextEdit.Wrap
+                    leftPadding: 8
+                    rightPadding: 8
+                    topPadding: 4
+                    horizontalAlignment: Text.AlignLeft
+                    color: palette.placeholderText
+                    font.pointSize: 12
+                    text: {
+                        let toName = languageNames[toLangCombo.currentIndex]
+                        let toObj = languages.find(function(lang) { return lang.name === toName })
+                        if (!toObj)
+                            return ""
+                        let toCode = toObj.code
+                        if (["ja", "ko", "zh"].indexOf(toCode) < 0)
+                            return ""
+                        return translationBridge.transliterate(resultText.text, toCode)
+                    }
+                    visible: text !== ""
+                }
+
+
                 RowLayout {
+                    id: bottomRow
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom

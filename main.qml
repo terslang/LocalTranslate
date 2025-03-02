@@ -100,10 +100,9 @@ ApplicationWindow {
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
 
+                    // The same list of language names
                     imodel: window.languageNames
-
-                    // Default selection index => "English"
-                    currentIndex: 7
+                    currentIndex: 7 // EN
                 }
 
                 ScrollView {
@@ -130,7 +129,34 @@ ApplicationWindow {
                     }
                 }
 
+                Text {
+                    id: fromTransliterationText
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: fromBottomRow.top
+                    wrapMode: TextEdit.Wrap
+                    leftPadding: 8
+                    rightPadding: 8
+                    topPadding: 4
+                    horizontalAlignment: Text.AlignLeft
+                    color: palette.placeholderText
+                    font.pointSize: 12
+                    text: {
+                        // Use fromLangCombo.text instead of indices
+                        let fromName = fromLangCombo.text
+                        let fromObj = languages.find(lang => lang.name === fromName)
+                        if (!fromObj)
+                            return ""
+                        let fromCode = fromObj.code
+                        if (["ja", "ko", "zh"].indexOf(fromCode) < 0)
+                            return ""
+                        return translationBridge.transliterate(sourceText.text, fromCode)
+                    }
+                    visible: text !== ""
+                }
+
                 RowLayout {
+                    id: fromBottomRow
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
@@ -171,21 +197,23 @@ ApplicationWindow {
                         }
                         padding: 8
                         onClicked: {
+                            // Prevent empty source from calling translate
                             if (sourceText.text.trim() === "") return
 
-                            // 1) Get selected "name" from fromLangCombo
-                            let fromName = languageNames[fromLangCombo.currentIndex]
-                            // 2) Find the corresponding object
+                            // 1) Get selected name from fromLangCombo.text
+                            let fromName = fromLangCombo.text
                             let fromObj = languages.find(lang => lang.name === fromName)
                             let fromLangCode = fromObj ? fromObj.code : "en"
 
-                            // 3) Do the same for toLangCombo
-                            let toName = languageNames[toLangCombo.currentIndex]
+                            // 2) Get selected name from toLangCombo.text
+                            let toName = toLangCombo.text
                             let toObj = languages.find(lang => lang.name === toName)
                             let toLangCode = toObj ? toObj.code : "de"
 
-                            // 4) Construct the language pair
+                            // 3) Construct the language pair
                             let langPair = fromLangCode + toLangCode
+
+                            // 4) Perform translation
                             let result = translationBridge.translate(sourceText.text, langPair)
                             resultText.text = result
                         }
@@ -215,11 +243,8 @@ ApplicationWindow {
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
 
-                    // Pass the same string list.
                     imodel: window.languageNames
-
-                    // Default to "German" => index 5
-                    currentIndex: 5
+                    currentIndex: 5 // DE
                 }
 
                 ScrollView {
@@ -247,10 +272,10 @@ ApplicationWindow {
                 }
 
                 Text {
-                    id: transliterationText
+                    id: toTransliterationText
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.bottom: bottomRow.top
+                    anchors.bottom: toBottomRow.top
                     wrapMode: TextEdit.Wrap
                     leftPadding: 8
                     rightPadding: 8
@@ -259,8 +284,8 @@ ApplicationWindow {
                     color: palette.placeholderText
                     font.pointSize: 12
                     text: {
-                        let toName = languageNames[toLangCombo.currentIndex]
-                        let toObj = languages.find(function(lang) { return lang.name === toName })
+                        let toName = toLangCombo.text
+                        let toObj = languages.find(lang => lang.name === toName)
                         if (!toObj)
                             return ""
                         let toCode = toObj.code
@@ -271,9 +296,8 @@ ApplicationWindow {
                     visible: text !== ""
                 }
 
-
                 RowLayout {
-                    id: bottomRow
+                    id: toBottomRow
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom

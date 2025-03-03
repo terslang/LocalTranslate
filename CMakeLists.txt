@@ -19,7 +19,7 @@ qt_add_executable(appLocalTranslate
 qt_add_qml_module(appLocalTranslate
     URI LocalTranslate
     VERSION 1.0
-    QML_FILES main.qml SearchableComboBox.qml
+    QML_FILES main.qml
 )
 
 set_target_properties(appLocalTranslate PROPERTIES
@@ -31,7 +31,7 @@ set_target_properties(appLocalTranslate PROPERTIES
 )
 
 target_link_libraries(appLocalTranslate
-    PRIVATE Qt6::Quick kotki::kotki-lib marian-lite yaml-cpp ICU::uc ICU::i18n)
+    PRIVATE Qt6::Quick kotki marian-lite yaml-cpp ICU::uc ICU::i18n)
 
 install(TARGETS appLocalTranslate
     BUNDLE DESTINATION .

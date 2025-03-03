@@ -52,8 +52,7 @@ ApplicationWindow {
         { code: "zh", name: "Chinese" }
     ]
 
-    // Build a plain string list of language names
-    property var languageNames: languages.map(lang => lang.name)
+    property var sortedLanguages: languages.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
 
     property int textAreaHeight: 250
     property int controlRowHeight: 50
@@ -91,7 +90,7 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
-                SearchableComboBox {
+                ComboBox {
                     id: fromLangCombo
                     width: 200
                     height: 32
@@ -99,10 +98,12 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
+                    popup.height: 330
 
-                    // The same list of language names
-                    imodel: window.languageNames
-                    currentIndex: 7 // EN
+                    model: window.sortedLanguages
+                    textRole: 'name'
+                    valueRole: 'code'
+                    currentIndex: window.sortedLanguages.findIndex(lang => lang.code === 'en')
                 }
 
                 ScrollView {
@@ -142,12 +143,7 @@ ApplicationWindow {
                     color: palette.placeholderText
                     font.pointSize: 12
                     text: {
-                        // Use fromLangCombo.text instead of indices
-                        let fromName = fromLangCombo.text
-                        let fromObj = languages.find(lang => lang.name === fromName)
-                        if (!fromObj)
-                            return ""
-                        let fromCode = fromObj.code
+                        let fromCode = fromLangCombo.currentValue
                         if (["ja", "ko", "zh"].indexOf(fromCode) < 0)
                             return ""
                         return translationBridge.transliterate(sourceText.text, fromCode)
@@ -201,14 +197,10 @@ ApplicationWindow {
                             if (sourceText.text.trim() === "") return
 
                             // 1) Get selected name from fromLangCombo.text
-                            let fromName = fromLangCombo.text
-                            let fromObj = languages.find(lang => lang.name === fromName)
-                            let fromLangCode = fromObj ? fromObj.code : "en"
+                            let fromLangCode = fromLangCombo.currentValue
 
                             // 2) Get selected name from toLangCombo.text
-                            let toName = toLangCombo.text
-                            let toObj = languages.find(lang => lang.name === toName)
-                            let toLangCode = toObj ? toObj.code : "de"
+                            let toLangCode = toLangCombo.currentValue
 
                             // 3) Construct the language pair
                             let langPair = fromLangCode + toLangCode
@@ -234,7 +226,7 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
-                SearchableComboBox {
+                ComboBox {
                     id: toLangCombo
                     width: 200
                     height: 32
@@ -242,9 +234,12 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
+                    popup.height: 330
 
-                    imodel: window.languageNames
-                    currentIndex: 5 // DE
+                    model: window.sortedLanguages
+                    textRole: 'name'
+                    valueRole: 'code'
+                    currentIndex: window.sortedLanguages.findIndex(lang => lang.code === 'de')
                 }
 
                 ScrollView {
@@ -284,11 +279,11 @@ ApplicationWindow {
                     color: palette.placeholderText
                     font.pointSize: 12
                     text: {
-                        let toName = toLangCombo.text
-                        let toObj = languages.find(lang => lang.name === toName)
-                        if (!toObj)
-                            return ""
-                        let toCode = toObj.code
+                        // let toName = toLangCombo.text
+                        // let toObj = languages.find(lang => lang.name === toName)
+                        // if (!toObj)
+                        //     return ""
+                        let toCode = toLangCombo.currentValue
                         if (["ja", "ko", "zh"].indexOf(toCode) < 0)
                             return ""
                         return translationBridge.transliterate(resultText.text, toCode)

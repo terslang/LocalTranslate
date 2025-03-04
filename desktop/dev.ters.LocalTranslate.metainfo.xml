@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>dev.ters.LocalTranslate</id>
+  
+  <name>LocalTranslate</name>
+  <summary>Translate text offline</summary>
+  
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+  
+  <description>
+    <p>LocalTranslate is an offline translation application that leverages Firefox's neural translation models from the <a href="https://github.com/mozilla/firefox-translations-models">mozilla/firefox-translations-models</a> project. It allows you to perform translations locally on your device without the need for an internet connection, with reasonable response times and enhanced privacy.</p>
+
+    <p>LocalTranslate supports the following languages:</p>
+
+    <ul>
+      <li>Bulgarian (bg)</li>
+      <li>Bosnian (bs)</li>
+      <li>Catalan (ca)</li>
+      <li>Czech (cs)</li>
+      <li>Danish (da)</li>
+      <li>German (de)</li>
+      <li>Greek (el)</li>
+      <li>English (en)</li>
+      <li>Spanish (es)</li>
+      <li>Estonian (et)</li>
+      <li>Persian (fa)</li>
+      <li>Finnish (fi)</li>
+      <li>French (fr)</li>
+      <li>Croatian (hr)</li>
+      <li>Hungarian (hu)</li>
+      <li>Indonesian (id)</li>
+      <li>Icelandic (is)</li>
+      <li>Italian (it)</li>
+      <li>Japanese (ja)</li>
+      <li>Korean (ko)</li>
+      <li>Lithuanian (lt)</li>
+      <li>Latvian (lv)</li>
+      <li>Maltese (mt)</li>
+      <li>Norwegian Bokmål (nb)</li>
+      <li>Dutch (nl)</li>
+      <li>Norwegian Nynorsk (nn)</li>
+      <li>Polish (pl)</li>
+      <li>Portuguese (pt)</li>
+      <li>Romanian (ro)</li>
+      <li>Russian (ru)</li>
+      <li>Slovak (sk)</li>
+      <li>Slovenian (sl)</li>
+      <li>Serbian (sr)</li>
+      <li>Swedish (sv)</li>
+      <li>Turkish (tr)</li>
+      <li>Ukrainian (uk)</li>
+      <li>Vietnamese (vi)</li>
+      <li>Chinese (zh)</li>
+    </ul>
+  </description>
+  
+  <launchable type="desktop-id">dev.ters.LocalTranslate.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://github.com/user-attachments/assets/dc250178-e9a4-4401-8105-3205bfd226b2</image>
+    </screenshot>
+  </screenshots>
+</component>

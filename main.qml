@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "."
 
 ApplicationWindow {
     id: window
@@ -11,48 +10,124 @@ ApplicationWindow {
     title: qsTr("LocalTranslate")
 
     // The original array of objects with code + name
-    property var languages: [
-        { code: "bg", name: "Bulgarian" },
-        { code: "bs", name: "Bosnian" },
-        { code: "ca", name: "Catalan" },
-        { code: "cs", name: "Czech" },
-        { code: "da", name: "Danish" },
-        { code: "de", name: "German" },
-        { code: "el", name: "Greek" },
-        { code: "en", name: "English" },
-        { code: "es", name: "Spanish" },
-        { code: "et", name: "Estonian" },
-        { code: "fa", name: "Persian" },
-        { code: "fi", name: "Finnish" },
-        { code: "fr", name: "French" },
-        { code: "hr", name: "Croatian" },
-        { code: "hu", name: "Hungarian" },
-        { code: "id", name: "Indonesian" },
-        { code: "is", name: "Icelandic" },
-        { code: "it", name: "Italian" },
-        { code: "ja", name: "Japanese" },
-        { code: "ko", name: "Korean" },
-        { code: "lt", name: "Lithuanian" },
-        { code: "lv", name: "Latvian" },
-        { code: "mt", name: "Maltese" },
-        { code: "nb", name: "Norwegian Bokmål" },
-        { code: "nl", name: "Dutch" },
-        { code: "nn", name: "Norwegian Nynorsk" },
-        { code: "pl", name: "Polish" },
-        { code: "pt", name: "Portuguese" },
-        { code: "ro", name: "Romanian" },
-        { code: "ru", name: "Russian" },
-        { code: "sk", name: "Slovak" },
-        { code: "sl", name: "Slovenian" },
-        { code: "sr", name: "Serbian" },
-        { code: "sv", name: "Swedish" },
-        { code: "tr", name: "Turkish" },
-        { code: "uk", name: "Ukrainian" },
-        { code: "vi", name: "Vietnamese" },
-        { code: "zh", name: "Chinese" }
-    ]
+    property var languages: [{
+            "code": "bg",
+            "name": "Bulgarian"
+        }, {
+            "code": "bs",
+            "name": "Bosnian"
+        }, {
+            "code": "ca",
+            "name": "Catalan"
+        }, {
+            "code": "cs",
+            "name": "Czech"
+        }, {
+            "code": "da",
+            "name": "Danish"
+        }, {
+            "code": "de",
+            "name": "German"
+        }, {
+            "code": "el",
+            "name": "Greek"
+        }, {
+            "code": "en",
+            "name": "English"
+        }, {
+            "code": "es",
+            "name": "Spanish"
+        }, {
+            "code": "et",
+            "name": "Estonian"
+        }, {
+            "code": "fa",
+            "name": "Persian"
+        }, {
+            "code": "fi",
+            "name": "Finnish"
+        }, {
+            "code": "fr",
+            "name": "French"
+        }, {
+            "code": "hr",
+            "name": "Croatian"
+        }, {
+            "code": "hu",
+            "name": "Hungarian"
+        }, {
+            "code": "id",
+            "name": "Indonesian"
+        }, {
+            "code": "is",
+            "name": "Icelandic"
+        }, {
+            "code": "it",
+            "name": "Italian"
+        }, {
+            "code": "ja",
+            "name": "Japanese"
+        }, {
+            "code": "ko",
+            "name": "Korean"
+        }, {
+            "code": "lt",
+            "name": "Lithuanian"
+        }, {
+            "code": "lv",
+            "name": "Latvian"
+        }, {
+            "code": "mt",
+            "name": "Maltese"
+        }, {
+            "code": "nb",
+            "name": "Norwegian Bokmål"
+        }, {
+            "code": "nl",
+            "name": "Dutch"
+        }, {
+            "code": "nn",
+            "name": "Norwegian Nynorsk"
+        }, {
+            "code": "pl",
+            "name": "Polish"
+        }, {
+            "code": "pt",
+            "name": "Portuguese"
+        }, {
+            "code": "ro",
+            "name": "Romanian"
+        }, {
+            "code": "ru",
+            "name": "Russian"
+        }, {
+            "code": "sk",
+            "name": "Slovak"
+        }, {
+            "code": "sl",
+            "name": "Slovenian"
+        }, {
+            "code": "sr",
+            "name": "Serbian"
+        }, {
+            "code": "sv",
+            "name": "Swedish"
+        }, {
+            "code": "tr",
+            "name": "Turkish"
+        }, {
+            "code": "uk",
+            "name": "Ukrainian"
+        }, {
+            "code": "vi",
+            "name": "Vietnamese"
+        }, {
+            "code": "zh",
+            "name": "Chinese"
+        }]
 
-    property var sortedLanguages: languages.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
+    property var sortedLanguages: languages.sort(
+                                      (a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
 
     // Languages that don't use latin script, these langs need transliteration
     // Bulgarian, Greek, Persian, Japanese, Korean, Russian, Ukrainian, Chinese, Serbian, Maltese
@@ -62,9 +137,7 @@ ApplicationWindow {
     property int controlRowHeight: 50
     property int frameHeight: textAreaHeight + 2 * controlRowHeight
     property bool isLandscape: width > height
-    property int effectiveFrameHeight: isLandscape
-                                       ? frameHeight
-                                       : ((height - (8 * 2 + 12)) / 2)
+    property int effectiveFrameHeight: isLandscape ? frameHeight : ((height - (8 * 2 + 12)) / 2)
 
     onWidthChanged: isLandscape = (width > height)
     onHeightChanged: isLandscape = (width > height)
@@ -80,12 +153,12 @@ ApplicationWindow {
         rowSpacing: 12
         columnSpacing: 12
         anchors.margins: 8
-        columns: isLandscape ? 2 : 1
+        columns: window.isLandscape ? 2 : 1
 
         // === SOURCE FRAME ===
         Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: effectiveFrameHeight
+            Layout.preferredHeight: window.effectiveFrameHeight
             background: Rectangle {
                 color: palette.base
                 radius: 4
@@ -107,7 +180,8 @@ ApplicationWindow {
                     model: window.sortedLanguages
                     textRole: 'name'
                     valueRole: 'code'
-                    currentIndex: window.sortedLanguages.findIndex(lang => lang.code === 'en')
+                    currentIndex: window.sortedLanguages.findIndex(
+                                      lang => lang.code === 'en')
                 }
 
                 ScrollView {
@@ -116,9 +190,7 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    height: isLandscape
-                            ? textAreaHeight
-                            : (effectiveFrameHeight - 2 * controlRowHeight)
+                    height: window.isLandscape ? window.textAreaHeight : (window.effectiveFrameHeight - 2 * window.controlRowHeight)
 
                     TextArea {
                         id: sourceText
@@ -148,8 +220,9 @@ ApplicationWindow {
                     font.pointSize: 12
                     text: {
                         let fromCode = fromLangCombo.currentValue
-                        if (nonLatinLangs.includes(fromCode))
-                            return translationBridge.transliterate(sourceText.text, fromCode)
+                        if (window.nonLatinLangs.includes(fromCode))
+                            return translationBridge.transliterate(
+                                        sourceText.text, fromCode)
                         return ""
                     }
                     visible: text !== ""
@@ -163,7 +236,7 @@ ApplicationWindow {
                     anchors.rightMargin: 8
                     anchors.leftMargin: 8
                     anchors.bottomMargin: 2
-                    height: controlRowHeight
+                    height: window.controlRowHeight
 
                     Button {
                         id: pasteButton
@@ -178,7 +251,9 @@ ApplicationWindow {
                         onClicked: sourceText.paste()
                     }
 
-                    Item { Layout.fillWidth: true }
+                    Item {
+                        Layout.fillWidth: true
+                    }
 
                     Button {
                         id: translateButton
@@ -198,7 +273,8 @@ ApplicationWindow {
                         padding: 8
                         onClicked: {
                             // Prevent empty source from calling translate
-                            if (sourceText.text.trim() === "") return
+                            if (sourceText.text.trim() === "")
+                                return
 
                             // 1) Get selected name from fromLangCombo.text
                             let fromLangCode = fromLangCombo.currentValue
@@ -210,7 +286,8 @@ ApplicationWindow {
                             let langPair = fromLangCode + toLangCode
 
                             // 4) Perform translation
-                            let result = translationBridge.translate(sourceText.text, langPair)
+                            let result = translationBridge.translate(
+                                    sourceText.text, langPair)
                             resultText.text = result
                         }
                     }
@@ -221,7 +298,7 @@ ApplicationWindow {
         // === RESULT FRAME ===
         Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: effectiveFrameHeight
+            Layout.preferredHeight: window.effectiveFrameHeight
             background: Rectangle {
                 color: palette.base
                 radius: 4
@@ -243,7 +320,8 @@ ApplicationWindow {
                     model: window.sortedLanguages
                     textRole: 'name'
                     valueRole: 'code'
-                    currentIndex: window.sortedLanguages.findIndex(lang => lang.code === 'de')
+                    currentIndex: window.sortedLanguages.findIndex(
+                                      lang => lang.code === 'de')
                 }
 
                 ScrollView {
@@ -252,9 +330,7 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    height: isLandscape
-                            ? textAreaHeight
-                            : (effectiveFrameHeight - 2 * controlRowHeight)
+                    height: window.isLandscape ? window.textAreaHeight : (window.effectiveFrameHeight - 2 * window.controlRowHeight)
 
                     TextArea {
                         id: resultText
@@ -284,8 +360,9 @@ ApplicationWindow {
                     font.pointSize: 12
                     text: {
                         let toCode = toLangCombo.currentValue
-                        if (nonLatinLangs.includes(toCode))
-                            return translationBridge.transliterate(resultText.text, toCode)
+                        if (window.nonLatinLangs.includes(toCode))
+                            return translationBridge.transliterate(
+                                        resultText.text, toCode)
                         return ""
                     }
                     visible: text !== ""
@@ -299,9 +376,11 @@ ApplicationWindow {
                     anchors.leftMargin: 8
                     anchors.rightMargin: 8
                     anchors.bottomMargin: 2
-                    height: controlRowHeight
+                    height: window.controlRowHeight
 
-                    Item { Layout.fillWidth: true }
+                    Item {
+                        Layout.fillWidth: true
+                    }
 
                     Button {
                         id: copyButton

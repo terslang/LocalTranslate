@@ -54,6 +54,10 @@ ApplicationWindow {
 
     property var sortedLanguages: languages.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
 
+    // Languages that don't use latin script, these langs need transliteration
+    // Bulgarian, Greek, Persian, Japanese, Korean, Russian, Ukrainian, Chinese, Serbian, Maltese
+    property var nonLatinLangs: ["bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
+
     property int textAreaHeight: 250
     property int controlRowHeight: 50
     property int frameHeight: textAreaHeight + 2 * controlRowHeight
@@ -144,9 +148,9 @@ ApplicationWindow {
                     font.pointSize: 12
                     text: {
                         let fromCode = fromLangCombo.currentValue
-                        if (["ja", "ko", "zh"].indexOf(fromCode) < 0)
-                            return ""
-                        return translationBridge.transliterate(sourceText.text, fromCode)
+                        if (nonLatinLangs.includes(fromCode))
+                            return translationBridge.transliterate(sourceText.text, fromCode)
+                        return ""
                     }
                     visible: text !== ""
                 }
@@ -279,14 +283,10 @@ ApplicationWindow {
                     color: palette.placeholderText
                     font.pointSize: 12
                     text: {
-                        // let toName = toLangCombo.text
-                        // let toObj = languages.find(lang => lang.name === toName)
-                        // if (!toObj)
-                        //     return ""
                         let toCode = toLangCombo.currentValue
-                        if (["ja", "ko", "zh"].indexOf(toCode) < 0)
-                            return ""
-                        return translationBridge.transliterate(resultText.text, toCode)
+                        if (nonLatinLangs.includes(toCode))
+                            return translationBridge.transliterate(resultText.text, toCode)
+                        return ""
                     }
                     visible: text !== ""
                 }

@@ -175,13 +175,68 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
-                    popup.height: 330
 
                     model: window.sortedLanguages
-                    textRole: 'name'
-                    valueRole: 'code'
+                    textRole: "name"
+                    valueRole: "code"
                     currentIndex: window.sortedLanguages.findIndex(
-                                      lang => lang.code === 'en')
+                                      lang => lang.code === "en")
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        color: palette.mid
+                        radius: 4
+                    }
+
+                    contentItem: Text {
+                        text: fromLangCombo.displayText
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.leftMargin: 8
+                        color: palette.text
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignLeft
+                        elide: Text.ElideRight
+                    }
+
+                    delegate: ItemDelegate {
+                        width: fromLangCombo.width
+                        height: 32
+                        highlighted: fromLangCombo.highlightedIndex == index
+                        background: Rectangle {
+                            anchors.fill: parent
+                            color: highlighted ? palette.midlight : palette.mid
+                            radius: 4
+                        }
+                        contentItem: Text {
+                            text: modelData.name
+                            anchors.verticalCenter: parent.verticalCenter
+                            leftPadding: 8
+                            color: palette.text
+                            elide: Text.ElideRight
+                        }
+                        onClicked: {
+                            fromLangCombo.currentIndex = index
+                            fromLangCombo.popup.close()
+                        }
+                    }
+
+                    popup: Popup {
+                        width: fromLangCombo.width
+                        implicitHeight: contentItem.implicitHeight
+                        padding: 0
+                        contentItem: ListView {
+                            clip: true
+                            implicitHeight: contentHeight
+                            model: fromLangCombo.popup.visible ? fromLangCombo.delegateModel : null
+                            currentIndex: fromLangCombo.highlightedIndex
+                            ScrollIndicator.vertical: ScrollIndicator {}
+                        }
+                        background: Rectangle {
+                            radius: 4
+                            color: palette.mid
+                        }
+                    }
                 }
 
                 ScrollView {
@@ -313,13 +368,68 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
-                    popup.height: 330
 
                     model: window.sortedLanguages
-                    textRole: 'name'
-                    valueRole: 'code'
+                    textRole: "name"
+                    valueRole: "code"
                     currentIndex: window.sortedLanguages.findIndex(
-                                      lang => lang.code === 'de')
+                                      lang => lang.code === "de")
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        color: palette.mid
+                        radius: 4
+                    }
+
+                    contentItem: Text {
+                        text: toLangCombo.displayText
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.leftMargin: 8
+                        color: palette.text
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignLeft
+                        elide: Text.ElideRight
+                    }
+
+                    delegate: ItemDelegate {
+                        width: toLangCombo.width
+                        height: 32
+                        highlighted: toLangCombo.highlightedIndex == index
+                        background: Rectangle {
+                            anchors.fill: parent
+                            color: highlighted ? palette.midlight : palette.mid
+                            radius: 4
+                        }
+                        contentItem: Text {
+                            text: modelData.name
+                            anchors.verticalCenter: parent.verticalCenter
+                            leftPadding: 8
+                            color: palette.text
+                            elide: Text.ElideRight
+                        }
+                        onClicked: {
+                            toLangCombo.currentIndex = index
+                            toLangCombo.popup.close()
+                        }
+                    }
+
+                    popup: Popup {
+                        width: toLangCombo.width
+                        implicitHeight: contentItem.implicitHeight
+                        padding: 0
+                        contentItem: ListView {
+                            clip: true
+                            implicitHeight: contentHeight
+                            model: toLangCombo.popup.visible ? toLangCombo.delegateModel : null
+                            currentIndex: toLangCombo.highlightedIndex
+                            ScrollIndicator.vertical: ScrollIndicator {}
+                        }
+                        background: Rectangle {
+                            radius: 4
+                            color: palette.mid
+                        }
+                    }
                 }
 
                 ScrollView {

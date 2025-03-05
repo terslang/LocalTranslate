@@ -194,8 +194,6 @@ ApplicationWindow {
 
                     TextArea {
                         id: sourceText
-                        width: sourceScrollView.width
-                        height: sourceScrollView.height
                         placeholderText: qsTr("Enter text to translate...")
                         placeholderTextColor: palette.placeholderText
                         wrapMode: TextEdit.Wrap
@@ -334,7 +332,6 @@ ApplicationWindow {
 
                     TextArea {
                         id: resultText
-                        width: resultScrollView.width
                         placeholderText: qsTr("Translation will appear here")
                         placeholderTextColor: palette.placeholderText
                         wrapMode: TextEdit.Wrap

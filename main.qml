@@ -223,7 +223,7 @@ ApplicationWindow {
 
                     popup: Popup {
                         width: fromLangCombo.width
-                        implicitHeight: contentItem.implicitHeight
+                        implicitHeight: 330
                         padding: 0
                         contentItem: ListView {
                             clip: true
@@ -416,7 +416,7 @@ ApplicationWindow {
 
                     popup: Popup {
                         width: toLangCombo.width
-                        implicitHeight: contentItem.implicitHeight
+                        implicitHeight: 330
                         padding: 0
                         contentItem: ListView {
                             clip: true

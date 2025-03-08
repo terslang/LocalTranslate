@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Controls.Material
 
 ApplicationWindow {
     id: window
@@ -8,6 +9,7 @@ ApplicationWindow {
     height: 720
     visible: true
     title: qsTr("LocalTranslate")
+    Material.theme: Material.Dark
 
     // The original array of objects with code + name
     property var languages: [{
@@ -127,10 +129,10 @@ ApplicationWindow {
         }]
 
     property var sortedLanguages: languages.sort(
-                                      (a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
+                                      (a, b) => (a.name > b.name) ? 1 : ((b.name
+                                                                          > a.name) ? -1 : 0))
 
-    // Languages that don't use latin script, these langs need transliteration
-    // Bulgarian, Greek, Persian, Japanese, Korean, Russian, Ukrainian, Chinese, Serbian, Maltese
+    // Languages that don't use Latin script
     property var nonLatinLangs: ["bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
 
     property int textAreaHeight: 250
@@ -141,12 +143,6 @@ ApplicationWindow {
 
     onWidthChanged: isLandscape = (width > height)
     onHeightChanged: isLandscape = (width > height)
-
-    SystemPalette {
-        id: palette
-        colorGroup: SystemPalette.Active
-    }
-    color: palette.window
 
     GridLayout {
         anchors.fill: parent
@@ -159,10 +155,6 @@ ApplicationWindow {
         Frame {
             Layout.fillWidth: true
             Layout.preferredHeight: window.effectiveFrameHeight
-            background: Rectangle {
-                color: palette.base
-                radius: 4
-            }
 
             contentItem: Item {
                 anchors.fill: parent
@@ -170,7 +162,6 @@ ApplicationWindow {
                 ComboBox {
                     id: fromLangCombo
                     width: 200
-                    height: 32
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.topMargin: 8
@@ -181,62 +172,6 @@ ApplicationWindow {
                     valueRole: "code"
                     currentIndex: window.sortedLanguages.findIndex(
                                       lang => lang.code === "en")
-
-                    background: Rectangle {
-                        anchors.fill: parent
-                        color: palette.mid
-                        radius: 4
-                    }
-
-                    contentItem: Text {
-                        text: fromLangCombo.displayText
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 8
-                        color: palette.text
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignLeft
-                        elide: Text.ElideRight
-                    }
-
-                    delegate: ItemDelegate {
-                        width: fromLangCombo.width
-                        height: 32
-                        highlighted: fromLangCombo.highlightedIndex == index
-                        background: Rectangle {
-                            anchors.fill: parent
-                            color: highlighted ? palette.midlight : palette.mid
-                            radius: 4
-                        }
-                        contentItem: Text {
-                            text: modelData.name
-                            anchors.verticalCenter: parent.verticalCenter
-                            leftPadding: 8
-                            color: palette.text
-                            elide: Text.ElideRight
-                        }
-                        onClicked: {
-                            fromLangCombo.currentIndex = index
-                            fromLangCombo.popup.close()
-                        }
-                    }
-
-                    popup: Popup {
-                        width: fromLangCombo.width
-                        implicitHeight: 330
-                        padding: 0
-                        contentItem: ListView {
-                            clip: true
-                            implicitHeight: contentHeight
-                            model: fromLangCombo.popup.visible ? fromLangCombo.delegateModel : null
-                            currentIndex: fromLangCombo.highlightedIndex
-                            ScrollIndicator.vertical: ScrollIndicator {}
-                        }
-                        background: Rectangle {
-                            radius: 4
-                            color: palette.mid
-                        }
-                    }
                 }
 
                 ScrollView {
@@ -249,13 +184,9 @@ ApplicationWindow {
 
                     TextArea {
                         id: sourceText
+                        padding: 8
                         placeholderText: qsTr("Enter text to translate...")
-                        placeholderTextColor: palette.placeholderText
                         wrapMode: TextEdit.Wrap
-                        color: palette.text
-                        background: null
-                        readOnly: false
-                        clip: true
                     }
                 }
 
@@ -268,14 +199,12 @@ ApplicationWindow {
                     leftPadding: 8
                     rightPadding: 8
                     topPadding: 4
-                    horizontalAlignment: Text.AlignLeft
-                    color: palette.placeholderText
-                    font.pointSize: 12
                     text: {
                         let fromCode = fromLangCombo.currentValue
-                        if (window.nonLatinLangs.includes(fromCode))
+                        if (window.nonLatinLangs.includes(fromCode)) {
                             return translationBridge.transliterate(
                                         sourceText.text, fromCode)
+                        }
                         return ""
                     }
                     visible: text !== ""
@@ -288,19 +217,11 @@ ApplicationWindow {
                     anchors.bottom: parent.bottom
                     anchors.rightMargin: 8
                     anchors.leftMargin: 8
-                    anchors.bottomMargin: 2
                     height: window.controlRowHeight
 
                     Button {
                         id: pasteButton
                         icon.name: "edit-paste"
-                        icon.color: "transparent"
-                        background: Rectangle {
-                            anchors.fill: parent
-                            color: palette.button
-                            radius: 4
-                        }
-                        padding: 8
                         onClicked: sourceText.paste()
                     }
 
@@ -311,34 +232,16 @@ ApplicationWindow {
                     Button {
                         id: translateButton
                         text: qsTr("Translate")
-                        background: Rectangle {
-                            anchors.fill: parent
-                            color: palette.highlight
-                            radius: 4
-                        }
-                        contentItem: Text {
-                            text: translateButton.text
-                            anchors.fill: parent
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            color: palette.highlightedText
-                        }
-                        padding: 8
                         onClicked: {
                             // Prevent empty source from calling translate
-                            if (sourceText.text.trim() === "")
+                            if (sourceText.text.trim() === "") {
                                 return
+                            }
 
-                            // 1) Get selected name from fromLangCombo.text
                             let fromLangCode = fromLangCombo.currentValue
-
-                            // 2) Get selected name from toLangCombo.text
                             let toLangCode = toLangCombo.currentValue
-
-                            // 3) Construct the language pair
                             let langPair = fromLangCode + toLangCode
 
-                            // 4) Perform translation
                             let result = translationBridge.translate(
                                     sourceText.text, langPair)
                             resultText.text = result
@@ -352,10 +255,6 @@ ApplicationWindow {
         Frame {
             Layout.fillWidth: true
             Layout.preferredHeight: window.effectiveFrameHeight
-            background: Rectangle {
-                color: palette.base
-                radius: 4
-            }
 
             contentItem: Item {
                 anchors.fill: parent
@@ -363,7 +262,6 @@ ApplicationWindow {
                 ComboBox {
                     id: toLangCombo
                     width: 200
-                    height: 32
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.topMargin: 8
@@ -374,62 +272,6 @@ ApplicationWindow {
                     valueRole: "code"
                     currentIndex: window.sortedLanguages.findIndex(
                                       lang => lang.code === "de")
-
-                    background: Rectangle {
-                        anchors.fill: parent
-                        color: palette.mid
-                        radius: 4
-                    }
-
-                    contentItem: Text {
-                        text: toLangCombo.displayText
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 8
-                        color: palette.text
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignLeft
-                        elide: Text.ElideRight
-                    }
-
-                    delegate: ItemDelegate {
-                        width: toLangCombo.width
-                        height: 32
-                        highlighted: toLangCombo.highlightedIndex == index
-                        background: Rectangle {
-                            anchors.fill: parent
-                            color: highlighted ? palette.midlight : palette.mid
-                            radius: 4
-                        }
-                        contentItem: Text {
-                            text: modelData.name
-                            anchors.verticalCenter: parent.verticalCenter
-                            leftPadding: 8
-                            color: palette.text
-                            elide: Text.ElideRight
-                        }
-                        onClicked: {
-                            toLangCombo.currentIndex = index
-                            toLangCombo.popup.close()
-                        }
-                    }
-
-                    popup: Popup {
-                        width: toLangCombo.width
-                        implicitHeight: 330
-                        padding: 0
-                        contentItem: ListView {
-                            clip: true
-                            implicitHeight: contentHeight
-                            model: toLangCombo.popup.visible ? toLangCombo.delegateModel : null
-                            currentIndex: toLangCombo.highlightedIndex
-                            ScrollIndicator.vertical: ScrollIndicator {}
-                        }
-                        background: Rectangle {
-                            radius: 4
-                            color: palette.mid
-                        }
-                    }
                 }
 
                 ScrollView {
@@ -442,14 +284,11 @@ ApplicationWindow {
 
                     TextArea {
                         id: resultText
+                        padding: 8
                         placeholderText: qsTr("Translation will appear here")
-                        placeholderTextColor: palette.placeholderText
                         wrapMode: TextEdit.Wrap
-                        color: palette.text
-                        background: null
                         readOnly: true
                         selectByMouse: true
-                        clip: true
                     }
                 }
 
@@ -462,14 +301,12 @@ ApplicationWindow {
                     leftPadding: 8
                     rightPadding: 8
                     topPadding: 4
-                    horizontalAlignment: Text.AlignLeft
-                    color: palette.placeholderText
-                    font.pointSize: 12
                     text: {
                         let toCode = toLangCombo.currentValue
-                        if (window.nonLatinLangs.includes(toCode))
+                        if (window.nonLatinLangs.includes(toCode)) {
                             return translationBridge.transliterate(
                                         resultText.text, toCode)
+                        }
                         return ""
                     }
                     visible: text !== ""
@@ -482,7 +319,6 @@ ApplicationWindow {
                     anchors.bottom: parent.bottom
                     anchors.leftMargin: 8
                     anchors.rightMargin: 8
-                    anchors.bottomMargin: 2
                     height: window.controlRowHeight
 
                     Item {
@@ -491,14 +327,7 @@ ApplicationWindow {
 
                     Button {
                         id: copyButton
-                        background: Rectangle {
-                            anchors.fill: parent
-                            color: palette.button
-                            radius: 4
-                        }
                         icon.name: "edit-copy"
-                        icon.color: "transparent"
-                        padding: 8
                         onClicked: resultText.copy()
                     }
                 }

@@ -18,9 +18,9 @@ public:
         kotki = std::make_unique<Kotki>();
 
         QString registryFile = QStandardPaths::locate(
-                                   QStandardPaths::GenericDataLocation, 
-                                   QStringLiteral("localtranslate/models/firefox/registry.json")
-                                   );
+                    QStandardPaths::GenericDataLocation,
+                    QStringLiteral("localtranslate/models/firefox/registry.json")
+                    );
 
         if (!QFileInfo::exists(registryFile)) {
             throw std::runtime_error(QString("Registry file does not exist: %1").arg(registryFile).toStdString());

@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Controls.Material
+import QtQuick.Controls.FluentWinUI3
 
 ApplicationWindow {
     id: window
@@ -9,7 +9,6 @@ ApplicationWindow {
     height: 720
     visible: true
     title: qsTr("LocalTranslate")
-    Material.theme: Material.Dark
 
     // The original array of objects with code + name
     property var languages: [{
@@ -179,13 +178,14 @@ ApplicationWindow {
                     anchors.top: fromLangCombo.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: 4
+                    anchors.topMargin: 8
                     height: window.isLandscape ? window.textAreaHeight : (window.effectiveFrameHeight - 2 * window.controlRowHeight)
 
                     TextArea {
                         id: sourceText
                         padding: 8
                         placeholderText: qsTr("Enter text to translate...")
+                        verticalAlignment: TextEdit.AlignTop
                         wrapMode: TextEdit.Wrap
                     }
                 }
@@ -279,13 +279,14 @@ ApplicationWindow {
                     anchors.top: toLangCombo.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: 4
+                    anchors.topMargin: 8
                     height: window.isLandscape ? window.textAreaHeight : (window.effectiveFrameHeight - 2 * window.controlRowHeight)
 
                     TextArea {
                         id: resultText
                         padding: 8
                         placeholderText: qsTr("Translation will appear here")
+                        verticalAlignment: TextEdit.AlignTop
                         wrapMode: TextEdit.Wrap
                         readOnly: true
                         selectByMouse: true

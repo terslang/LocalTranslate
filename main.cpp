@@ -17,9 +17,10 @@ public:
     explicit TranslationBridge(QObject *parent = nullptr) : QObject(parent) {
         kotki = std::make_unique<Kotki>();
 
-        QString appDataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-        QDir dir(appDataDir);
-        QString registryFile = dir.filePath("models/firefox/registry.json");
+        QString registryFile = QStandardPaths::locate(
+                                   QStandardPaths::GenericDataLocation, 
+                                   QStringLiteral("localtranslate/models/firefox/registry.json")
+                                   );
 
         if (!QFileInfo::exists(registryFile)) {
             throw std::runtime_error(QString("Registry file does not exist: %1").arg(registryFile).toStdString());

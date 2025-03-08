@@ -19,7 +19,7 @@ public:
 
         QString appDataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         QDir dir(appDataDir);
-        QString registryFile = dir.filePath("models/registry.json");
+        QString registryFile = dir.filePath("models/firefox/registry.json");
 
         if (!QFileInfo::exists(registryFile)) {
             throw std::runtime_error(QString("Registry file does not exist: %1").arg(registryFile).toStdString());

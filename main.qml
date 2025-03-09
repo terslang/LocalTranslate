@@ -237,6 +237,10 @@ ApplicationWindow {
                             color: palette.alternateBase
                         }
                     }
+
+                    onCurrentIndexChanged: {
+                        resultText.text = ""
+                    }
                 }
 
                 ScrollView {
@@ -430,6 +434,10 @@ ApplicationWindow {
                             radius: 4
                             color: palette.alternateBase
                         }
+                    }
+
+                    onCurrentIndexChanged: {
+                        resultText.text = ""
                     }
                 }
 

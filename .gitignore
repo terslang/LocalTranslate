@@ -1,0 +1,5 @@
+.hugo_build.lock
+public/
+.cache/
+build/
+.clangd

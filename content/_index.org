@@ -8,6 +8,12 @@ LocalTranslate is an offline translation application that uses Firefox’s neura
 (from [[https://github.com/mozilla/firefox-translations-models][mozilla/firefox-translations-models]]) to perform high-quality translations locally on your
 device.
 
+* Built With (Thanks to)
+[[https://github.com/kroketio/kotki][kroketio/kotki]]
+[[https://github.com/mozilla/firefox-translations-models][mozilla/firefox-translations-models]]
+[[https://marian-nmt.github.io/][Marian NMT]]
+[[https://wiki.qt.io/Qt_Quick][Qt Quick]]
+
 * Supported Languages
 Translation between all language-pairs is not possible as of yet. More specifically, pairs of languages that
 do not have even an indirect path between each other (such as via English) are not supported. Please
@@ -55,9 +61,9 @@ pairs.
 - Vietnamese (vi)
 - Chinese (zh)
 
-** Screenshots
+* Screenshots
 [[localtranslate-light-ende.png]]
 [[localtranslate-dark-enko.png]]
-[[localtranslate-light-ende.png]]
+[[localtranslate-light-gren.png]]
 [[localtranslate-dark-enzh.png]]
 

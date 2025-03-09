@@ -4,9 +4,17 @@
   
   <name>LocalTranslate</name>
   <summary>Translate text offline</summary>
+  <developer id="dev.ters">
+    <name>Shriram Ravindranathan</name>
+  </developer>
   
   <metadata_license>FSFAP</metadata_license>
   <project_license>GPL-3.0-only</project_license>
+
+  <url type="homepage">https://terslang.github.io/LocalTranslate/</url>
+  <url type="bugtracker">https://github.com/terslang/LocalTranslate/issues</url>
+  <url type="contribute">https://github.com/terslang/LocalTranslate/</url>
+  <url type="help">https://terslang.github.io/LocalTranslate/</url>  
   
   <description>
     <p>LocalTranslate is an offline translation application that leverages Firefox's neural translation models from the <a href="https://github.com/mozilla/firefox-translations-models">mozilla/firefox-translations-models</a> project. It allows you to perform translations locally on your device without the need for an internet connection, with reasonable response times and enhanced privacy.</p>
@@ -54,11 +62,52 @@
       <li>Chinese (zh)</li>
     </ul>
   </description>
+
+  <categories>
+    <category>Utility</category>
+    <category>Education</category>
+  </categories>
+
+  <keywords>
+    <keyword>Translate</keyword>
+    <keyword>Language</keyword>
+    <keyword>Translation</keyword>
+    <keyword>Offline</keyword>    
+  </keywords>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#af7faf</color>
+    <color type="primary" scheme_preference="dark">#a599a5</color>
+  </branding>
   
   <launchable type="desktop-id">dev.ters.LocalTranslate.desktop</launchable>
   <screenshots>
-    <screenshot type="default">
-      <image>https://github.com/user-attachments/assets/dc250178-e9a4-4401-8105-3205bfd226b2</image>
+    <screenshot>
+      <image>https://terslang.github.io/LocalTranslate/localtranslate-light-ende.png</image>
+      <caption>English to German translation, portrait layout</caption>
     </screenshot>
+    <screenshot>
+      <image>https://terslang.github.io/LocalTranslate/localtranslate-dark-enko.png</image>
+      <caption>English to Korean translation, portrait layout</caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://terslang.github.io/LocalTranslate/localtranslate-light-gren.png</image>
+      <caption>Greek to English translation, landscape layout</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://terslang.github.io/LocalTranslate/localtranslate-dark-enzh.png</image>
+      <caption>English to Chinese translation, landscape layout</caption>
+    </screenshot>        
   </screenshots>
+  
+  <releases>
+    <release version="0.0.1" date="2025-03-09">
+      <description>
+        Initial Release
+      </description>
+    </release>
+  </releases>
+  
+  <content_rating type="oars-1.1" />
+  
 </component>

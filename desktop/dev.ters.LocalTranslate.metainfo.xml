@@ -17,7 +17,7 @@
   <url type="help">https://terslang.github.io/LocalTranslate/</url>  
   
   <description>
-    <p>LocalTranslate is an offline translation application that leverages Firefox's neural translation models from the <a href="https://github.com/mozilla/firefox-translations-models">mozilla/firefox-translations-models</a> project. It allows you to perform translations locally on your device without the need for an internet connection, with reasonable response times and enhanced privacy.</p>
+    <p>LocalTranslate is an offline translation application that leverages Firefox's neural translation models from the mozilla/firefox-translations-models project. It allows you to perform translations locally on your device without the need for an internet connection, with reasonable response times and enhanced privacy.</p>
 
     <p>LocalTranslate supports the following languages:</p>
 

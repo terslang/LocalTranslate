@@ -128,11 +128,9 @@ ApplicationWindow {
 
     property var sortedLanguages: languages.sort(
                                       (a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
-
-    // Languages that don't use latin script, these langs need transliteration
-    // Bulgarian, Greek, Persian, Japanese, Korean, Russian, Ukrainian, Chinese, Serbian, Maltese
     property var nonLatinLangs: ["bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
 
+    // The existing properties for dimensions, etc.
     property int textAreaHeight: 250
     property int controlRowHeight: 50
     property int frameHeight: textAreaHeight + 2 * controlRowHeight
@@ -239,17 +237,21 @@ ApplicationWindow {
                     }
 
                     onCurrentIndexChanged: {
+                        // Clear the existing result whenever the user changes 'from' language
                         resultText.text = ""
                     }
                 }
 
+                // Anchor this ScrollView’s bottom to the transliteration text’s top
+                // so it shrinks if the transliteration text grows.
                 ScrollView {
                     id: sourceScrollView
                     anchors.top: fromLangCombo.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    height: window.isLandscape ? window.textAreaHeight : (window.effectiveFrameHeight - 2 * window.controlRowHeight)
+                    // Instead of a fixed height, anchor to fromTransliterationText
+                    anchors.bottom: fromTransliterationText.top
 
                     TextArea {
                         id: sourceText
@@ -268,6 +270,7 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: fromBottomRow.top
+                    anchors.bottomMargin: 4
                     wrapMode: TextEdit.Wrap
                     leftPadding: 8
                     rightPadding: 8
@@ -330,20 +333,13 @@ ApplicationWindow {
                         }
                         padding: 8
                         onClicked: {
-                            // Prevent empty source from calling translate
                             if (sourceText.text.trim() === "")
                                 return
 
-                            // 1) Get selected name from fromLangCombo.text
                             let fromLangCode = fromLangCombo.currentValue
-
-                            // 2) Get selected name from toLangCombo.text
                             let toLangCode = toLangCombo.currentValue
-
-                            // 3) Construct the language pair
                             let langPair = fromLangCode + toLangCode
 
-                            // 4) Perform translation
                             let result = translationBridge.translate(
                                     sourceText.text, langPair)
                             resultText.text = result
@@ -447,7 +443,7 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    height: window.isLandscape ? window.textAreaHeight : (window.effectiveFrameHeight - 2 * window.controlRowHeight)
+                    anchors.bottom: toTransliterationText.top
 
                     TextArea {
                         id: resultText
@@ -467,6 +463,7 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: toBottomRow.top
+                    anchors.bottomMargin: 4
                     wrapMode: TextEdit.Wrap
                     leftPadding: 8
                     rightPadding: 8

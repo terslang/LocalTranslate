@@ -294,7 +294,8 @@ ApplicationWindow {
                     Button {
                         id: pasteButton
                         icon.name: "edit-paste"
-                        icon.color: "transparent"
+                        icon.color: palette.text
+                        icon.source: "qrc:/images/paste.png"
                         background: Rectangle {
                             anchors.fill: parent
                             color: palette.button
@@ -497,7 +498,8 @@ ApplicationWindow {
                             radius: 4
                         }
                         icon.name: "edit-copy"
-                        icon.color: "transparent"
+                        icon.color: palette.text
+                        icon.source: "qrc:/images/copy.png"
                         padding: 8
                         onClicked: resultText.copy()
                     }

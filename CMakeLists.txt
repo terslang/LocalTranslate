@@ -13,7 +13,7 @@ find_package(yaml-cpp REQUIRED)
 find_package(ICU COMPONENTS uc i18n REQUIRED)
 
 qt_add_executable(appLocalTranslate
-    main.cpp
+    main.cpp resources.qrc
 )
 
 qt_add_qml_module(appLocalTranslate

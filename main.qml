@@ -184,7 +184,7 @@ ApplicationWindow {
 
                     background: Rectangle {
                         anchors.fill: parent
-                        color: palette.mid
+                        color: palette.alternateBase
                         radius: 4
                     }
 
@@ -205,7 +205,7 @@ ApplicationWindow {
                         highlighted: fromLangCombo.highlightedIndex == index
                         background: Rectangle {
                             anchors.fill: parent
-                            color: highlighted ? palette.midlight : palette.mid
+                            color: highlighted ? palette.midlight : palette.alternateBase
                             radius: 4
                         }
                         contentItem: Text {
@@ -234,7 +234,7 @@ ApplicationWindow {
                         }
                         background: Rectangle {
                             radius: 4
-                            color: palette.mid
+                            color: palette.alternateBase
                         }
                     }
                 }
@@ -377,7 +377,7 @@ ApplicationWindow {
 
                     background: Rectangle {
                         anchors.fill: parent
-                        color: palette.mid
+                        color: palette.alternateBase
                         radius: 4
                     }
 
@@ -398,7 +398,7 @@ ApplicationWindow {
                         highlighted: toLangCombo.highlightedIndex == index
                         background: Rectangle {
                             anchors.fill: parent
-                            color: highlighted ? palette.midlight : palette.mid
+                            color: highlighted ? palette.midlight : palette.alternateBase
                             radius: 4
                         }
                         contentItem: Text {
@@ -427,7 +427,7 @@ ApplicationWindow {
                         }
                         background: Rectangle {
                             radius: 4
-                            color: palette.mid
+                            color: palette.alternateBase
                         }
                     }
                 }

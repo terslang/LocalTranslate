@@ -506,7 +506,13 @@ ApplicationWindow {
                         icon.color: palette.text
                         icon.source: "qrc:/images/copy.png"
                         padding: 8
-                        onClicked: resultText.copy()
+                        onClicked: {
+                            if (resultText.text.length > 0) {
+                                resultText.selectAll()
+                                resultText.copy()
+                                resultText.deselect()
+                            }
+                        }
                     }
                 }
             }

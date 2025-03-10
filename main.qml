@@ -128,6 +128,9 @@ ApplicationWindow {
 
     property var sortedLanguages: languages.sort(
                                       (a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
+
+    // Languages that don't use latin script, these langs need transliteration
+    // Bulgarian, Greek, Persian, Japanese, Korean, Russian, Ukrainian, Chinese, Serbian, Maltese
     property var nonLatinLangs: ["bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
 
     // The existing properties for dimensions, etc.

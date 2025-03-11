@@ -323,7 +323,7 @@ ApplicationWindow {
                         text: qsTr("Translate")
                         background: Rectangle {
                             anchors.fill: parent
-                            color: pasteButton.down ? palette.highlight : palette.accent
+                            color: translateButton.down ? palette.highlight : palette.accent
                             radius: 4
                         }
                         contentItem: Text {

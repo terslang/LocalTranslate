@@ -156,7 +156,7 @@ ApplicationWindow {
         // === SOURCE FRAME ===
         Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: window.effectiveFrameHeight
+            Layout.fillHeight: true
             background: Rectangle {
                 color: palette.base
                 radius: 4
@@ -305,7 +305,7 @@ ApplicationWindow {
                         icon.source: "qrc:/images/paste.png"
                         background: Rectangle {
                             anchors.fill: parent
-                            color: palette.button
+                            color: pasteButton.down ? palette.highlight : palette.button
                             radius: 4
                         }
                         padding: 8
@@ -321,7 +321,7 @@ ApplicationWindow {
                         text: qsTr("Translate")
                         background: Rectangle {
                             anchors.fill: parent
-                            color: palette.highlight
+                            color: translateButton.down ? palette.highlight : palette.accent
                             radius: 4
                         }
                         contentItem: Text {
@@ -352,7 +352,7 @@ ApplicationWindow {
         // === RESULT FRAME ===
         Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: window.effectiveFrameHeight
+            Layout.fillHeight: true
             background: Rectangle {
                 color: palette.base
                 radius: 4
@@ -499,7 +499,7 @@ ApplicationWindow {
                         id: copyButton
                         background: Rectangle {
                             anchors.fill: parent
-                            color: palette.button
+                            color: copyButton.down ? palette.highlight : palette.button
                             radius: 4
                         }
                         icon.name: "edit-copy"

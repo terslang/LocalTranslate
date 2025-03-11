@@ -82,17 +82,17 @@
   
   <launchable type="desktop-id">dev.ters.LocalTranslate.desktop</launchable>
   <screenshots>
-    <screenshot>
-      <image>https://terslang.github.io/LocalTranslate/localtranslate-light-ende.png</image>
-      <caption>English to German translation, portrait layout</caption>
+    <screenshot type="default">
+      <image>https://terslang.github.io/LocalTranslate/localtranslate-light-gren.png</image>
+      <caption>Greek to English translation, landscape layout</caption>
     </screenshot>
     <screenshot>
       <image>https://terslang.github.io/LocalTranslate/localtranslate-dark-enko.png</image>
       <caption>English to Korean translation, portrait layout</caption>
     </screenshot>
-    <screenshot type="default">
-      <image>https://terslang.github.io/LocalTranslate/localtranslate-light-gren.png</image>
-      <caption>Greek to English translation, landscape layout</caption>
+    <screenshot>
+      <image>https://terslang.github.io/LocalTranslate/localtranslate-light-ende.png</image>
+      <caption>English to German translation, portrait layout</caption>
     </screenshot>
     <screenshot>
       <image>https://terslang.github.io/LocalTranslate/localtranslate-dark-enzh.png</image>
@@ -101,6 +101,19 @@
   </screenshots>
   
   <releases>
+    <release version="0.0.3" date="2025-03-11">
+      <description>
+        <ul>
+          <li>Simplify layout (now height adjusts with screen size)</li>
+          <li>Add visual feedback on button click.</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.0.2" date="2025-03-10">
+      <description>
+        Fix copy button issue
+      </description>
+    </release>
     <release version="0.0.1" date="2025-03-09">
       <description>
         Initial Release

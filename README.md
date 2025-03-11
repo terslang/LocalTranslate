@@ -2,7 +2,11 @@
 <img width="150px" src="desktop/localtranslate.png" align="right">
 Translate offline using Firefox Translation Models.
 
-LocalTranslate is an offline translation application that uses Firefox’s neural translation models (from [mozilla/firefox-translations-models](https://github.com/mozilla/firefox-translations-models)) to perform high-quality translations locally on your device.
+LocalTranslate uses Firefox’s neural translation models (from [mozilla/firefox-translations-models](https://github.com/mozilla/firefox-translations-models)) to perform high-quality translations locally on your device.
+
+<a href='https://flathub.org/apps/dev.ters.LocalTranslate'>
+  <img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/>
+</a>
 
 ## Screenshots
 ![localtranslate-landscape-dark](https://terslang.github.io/LocalTranslate/localtranslate-dark-enzh.png)

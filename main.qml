@@ -307,7 +307,7 @@ ApplicationWindow {
                         icon.source: "qrc:/images/paste.png"
                         background: Rectangle {
                             anchors.fill: parent
-                            color: palette.button
+                            color: pasteButton.down ? palette.highlight : palette.button
                             radius: 4
                         }
                         padding: 8
@@ -323,7 +323,7 @@ ApplicationWindow {
                         text: qsTr("Translate")
                         background: Rectangle {
                             anchors.fill: parent
-                            color: palette.highlight
+                            color: pasteButton.down ? palette.highlight : palette.accent
                             radius: 4
                         }
                         contentItem: Text {
@@ -501,7 +501,7 @@ ApplicationWindow {
                         id: copyButton
                         background: Rectangle {
                             anchors.fill: parent
-                            color: palette.button
+                            color: copyButton.down ? palette.highlight : palette.button
                             radius: 4
                         }
                         icon.name: "edit-copy"

@@ -138,7 +138,6 @@ ApplicationWindow {
     property int controlRowHeight: 50
     property int frameHeight: textAreaHeight + 2 * controlRowHeight
     property bool isLandscape: width > height
-    property int effectiveFrameHeight: isLandscape ? frameHeight : ((height - (8 * 2 + 12)) / 2)
 
     onWidthChanged: isLandscape = (width > height)
     onHeightChanged: isLandscape = (width > height)
@@ -159,7 +158,7 @@ ApplicationWindow {
         // === SOURCE FRAME ===
         Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: window.effectiveFrameHeight
+            Layout.fillHeight: true
             background: Rectangle {
                 color: palette.base
                 radius: 4
@@ -355,7 +354,7 @@ ApplicationWindow {
         // === RESULT FRAME ===
         Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: window.effectiveFrameHeight
+            Layout.fillHeight: true
             background: Rectangle {
                 color: palette.base
                 radius: 4

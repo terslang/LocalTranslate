@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Controls.FluentWinUI3 6.8
+import QtQuick.Controls.FluentWinUI3
 
 ApplicationWindow {
     id: window
@@ -147,31 +147,19 @@ ApplicationWindow {
         Text {
             id: lightLogoText
             text: "Local"
-            color: lightLogoText.palette.brightText
+            color: lightLogoText.palette.text
             font.pixelSize: 24
         }
         Text {
             id: boldLogoText
             text: "Translate"
-            color: boldLogoText.palette.brightText
+            color: boldLogoText.palette.text
             font.pixelSize: 24
             font.bold: true
         }
         Item {
             Layout.fillWidth: true
         }
-
-        // Button {
-        //     id: themeButton
-        //     // No text
-        //     text: ""
-        //     icon.source: (window.Material.theme
-        //                   === Material.Light) ? "qrc:/images/moon.png" : "qrc:/images/sun.png"
-        //     onClicked: {
-        //         window.Material.theme = (window.Material.theme
-        //                                  === Material.Light) ? Material.Dark : Material.Light
-        //     }
-        // }
     }
 
     // ========== MAIN LAYOUT ==========

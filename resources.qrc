@@ -4,8 +4,6 @@
         <file>images/copy.png</file>
         <file>images/arrow-down-up.png</file>
         <file>images/arrow-left-right.png</file>
-        <file>images/sun.png</file>
-        <file>images/moon.png</file>
         <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

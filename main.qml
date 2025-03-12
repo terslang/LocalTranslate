@@ -304,11 +304,12 @@ ApplicationWindow {
                         text: qsTr("Translate")
                         width: 80
                         height: 28
+                        highlighted: true
                         font.pixelSize: 12
+                        font.bold: true
                         onClicked: {
                             if (sourceText.text.trim() === "")
                                 return
-
                             let fromLangCode = fromLangCombo.currentValue
                             let toLangCode = toLangCombo.currentValue
                             let langPair = fromLangCode + toLangCode

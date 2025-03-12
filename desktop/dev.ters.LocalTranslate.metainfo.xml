@@ -101,6 +101,16 @@
   </screenshots>
   
   <releases>
+    <release version="0.0.4" date="2025-03-12">
+      <description>
+        <ul>
+          <li>Remove dependency on SystemPalette, use FluentUI colors</li>
+          <li>Add Swap Button</li>
+          <li>Add some other minor UI changes</li>
+          <li>Upgrade to Qt 6.8</li>
+        </ul>
+      </description>
+    </release>    
     <release version="0.0.3" date="2025-03-11">
       <description>
         <ul>

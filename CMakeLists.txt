@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.2 COMPONENTS Quick REQUIRED)
+find_package(Qt6 6.8 COMPONENTS Quick REQUIRED)
 find_package(kotki REQUIRED)
 find_package(marian-lite REQUIRED)
 find_package(yaml-cpp REQUIRED)

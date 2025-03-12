@@ -10,7 +10,7 @@ ApplicationWindow {
     title: qsTr("LocalTranslate")
 
     // The original array of objects with code + name
-    property var languages: [{
+    readonly property var languages: [{
             "code": "bg",
             "name": "Bulgarian"
         }, {
@@ -126,21 +126,19 @@ ApplicationWindow {
             "name": "Chinese"
         }]
 
-    property var sortedLanguages: languages.sort(
-                                      (a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
+    readonly property var sortedLanguages: languages.sort(
+                                               (a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) // sort by name
 
     // Languages that don't use latin script, these langs need transliteration
     // Bulgarian, Greek, Persian, Japanese, Korean, Russian, Ukrainian, Chinese, Serbian, Maltese
-    property var nonLatinLangs: ["bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
+    readonly property var nonLatinLangs: ["bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
 
     // The existing properties for dimensions, etc.
-    property int textAreaHeight: 250
-    property int controlRowHeight: 50
-    property int frameHeight: textAreaHeight + 2 * controlRowHeight
-    property bool isLandscape: width > height
-
-    onWidthChanged: isLandscape = (width > height)
-    onHeightChanged: isLandscape = (width > height)
+    readonly property int textAreaHeight: 250
+    readonly property int controlRowHeight: 50
+    readonly property int frameHeight: textAreaHeight + 2 * controlRowHeight
+    readonly property bool isLandscape: width > height
+    readonly property int effectiveFrameHeight: isLandscape ? frameHeight : ((height - (8 * 2 + 12)) / 2)
 
     SystemPalette {
         id: palette

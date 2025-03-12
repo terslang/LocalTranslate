@@ -5,8 +5,8 @@ import QtQuick.Layouts
 
 ApplicationWindow {
     id: window
-    width: 768 / 1.77
-    height: 768
+    width: 820 / 1.618
+    height: 820
     visible: true
     title: qsTr("LocalTranslate")
 
@@ -416,7 +416,7 @@ ApplicationWindow {
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
                     visible: text !== ""
-                    color: Material.hintTextColor
+                    color: Material.secondaryTextColor
 
                     text: {
                         let toCode = toLangCombo.currentValue

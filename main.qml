@@ -5,7 +5,7 @@ import QtQuick.Layouts
 
 ApplicationWindow {
     id: window
-    width: 768 / 2
+    width: 768 / 1.77
     height: 768
     visible: true
     title: qsTr("LocalTranslate")

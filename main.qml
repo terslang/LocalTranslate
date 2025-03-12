@@ -145,15 +145,15 @@ ApplicationWindow {
         anchors.margins: 8
         spacing: 0
         Text {
-            id: lightLogoText
+            id: slimLogoText
             text: "Local"
-            color: lightLogoText.palette.text
+            color: window.palette.text
             font.pixelSize: 24
         }
         Text {
             id: boldLogoText
             text: "Translate"
-            color: boldLogoText.palette.text
+            color: window.palette.text
             font.pixelSize: 24
             font.bold: true
         }
@@ -248,7 +248,7 @@ ApplicationWindow {
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
                     visible: text !== ""
-                    color: fromTransliterationText.palette.placeholderText
+                    color: window.palette.placeholderText
 
                     text: {
                         let fromCode = fromLangCombo.currentValue
@@ -401,7 +401,7 @@ ApplicationWindow {
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
                     visible: text !== ""
-                    color: toTransliterationText.palette.placeholderText
+                    color: window.palette.placeholderText
 
                     text: {
                         let toCode = toLangCombo.currentValue

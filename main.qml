@@ -238,7 +238,7 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    anchors.bottom: fromTransliterationText.top
+                    anchors.bottom: fromTransliterationText.visible ? fromTransliterationText.top : fromBottomRow.top
 
                     TextArea {
                         Material.roundedScale: Material.SmallScale
@@ -262,7 +262,6 @@ ApplicationWindow {
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
                     visible: text !== ""
-                    height: visible ? implicitHeight : 0
                     color: Material.secondaryTextColor
 
                     text: {
@@ -391,7 +390,7 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    anchors.bottom: toTransliterationText.top
+                    anchors.bottom: toTransliterationText.visible ? toTransliterationText.top : toBottomRow.top
 
                     TextArea {
                         Material.roundedScale: Material.SmallScale
@@ -416,7 +415,6 @@ ApplicationWindow {
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
                     visible: text !== ""
-                    height: visible ? implicitHeight : 0
                     color: Material.hintTextColor
 
                     text: {

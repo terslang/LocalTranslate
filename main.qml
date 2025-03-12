@@ -203,7 +203,7 @@ ApplicationWindow {
                         highlighted: fromLangCombo.highlightedIndex == index
                         background: Rectangle {
                             anchors.fill: parent
-                            color: highlighted ? palette.midlight : palette.alternateBase
+                            color: highlighted ? palette.highlight : palette.alternateBase
                             radius: 4
                         }
                         contentItem: Text {
@@ -399,7 +399,7 @@ ApplicationWindow {
                         highlighted: toLangCombo.highlightedIndex == index
                         background: Rectangle {
                             anchors.fill: parent
-                            color: highlighted ? palette.midlight : palette.alternateBase
+                            color: highlighted ? palette.highlight : palette.alternateBase
                             radius: 4
                         }
                         contentItem: Text {

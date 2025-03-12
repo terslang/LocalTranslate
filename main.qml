@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material
 import QtQuick.Layouts
+import QtQuick.Controls.FluentWinUI3 6.8
 
 ApplicationWindow {
     id: window
@@ -9,8 +9,6 @@ ApplicationWindow {
     height: 820
     visible: true
     title: qsTr("LocalTranslate")
-
-    Material.roundedScale: Material.SmallScale
 
     // The original array of objects with code + name
     readonly property var languages: [{
@@ -147,13 +145,15 @@ ApplicationWindow {
         anchors.margins: 8
         spacing: 0
         Text {
+            id: lightLogoText
             text: "Local"
-            color: Material.primaryTextColor
+            color: lightLogoText.palette.brightText
             font.pixelSize: 24
         }
         Text {
+            id: boldLogoText
             text: "Translate"
-            color: Material.primaryTextColor
+            color: boldLogoText.palette.brightText
             font.pixelSize: 24
             font.bold: true
         }
@@ -161,17 +161,17 @@ ApplicationWindow {
             Layout.fillWidth: true
         }
 
-        Button {
-            id: themeButton
-            // No text
-            text: ""
-            icon.source: (window.Material.theme
-                          === Material.Light) ? "qrc:/images/moon.png" : "qrc:/images/sun.png"
-            onClicked: {
-                window.Material.theme = (window.Material.theme
-                                         === Material.Light) ? Material.Dark : Material.Light
-            }
-        }
+        // Button {
+        //     id: themeButton
+        //     // No text
+        //     text: ""
+        //     icon.source: (window.Material.theme
+        //                   === Material.Light) ? "qrc:/images/moon.png" : "qrc:/images/sun.png"
+        //     onClicked: {
+        //         window.Material.theme = (window.Material.theme
+        //                                  === Material.Light) ? Material.Dark : Material.Light
+        //     }
+        // }
     }
 
     // ========== MAIN LAYOUT ==========
@@ -196,7 +196,7 @@ ApplicationWindow {
         // === SOURCE FRAME ===
         Frame {
             id: fromFrame
-            Material.roundedScale: Material.SmallScale
+
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -209,7 +209,6 @@ ApplicationWindow {
                 anchors.fill: parent
 
                 ComboBox {
-                    Material.roundedScale: Material.SmallScale
                     id: fromLangCombo
                     width: 200
                     font.pixelSize: 12
@@ -232,7 +231,6 @@ ApplicationWindow {
 
                 // ScrollView for source text
                 ScrollView {
-                    Material.roundedScale: Material.SmallScale
                     id: sourceScrollView
                     anchors.top: fromLangCombo.bottom
                     anchors.left: parent.left
@@ -241,10 +239,10 @@ ApplicationWindow {
                     anchors.bottom: fromTransliterationText.visible ? fromTransliterationText.top : fromBottomRow.top
 
                     TextArea {
-                        Material.roundedScale: Material.SmallScale
                         id: sourceText
                         placeholderText: qsTr("Enter text to translate...")
                         wrapMode: TextEdit.Wrap
+                        verticalAlignment: TextEdit.AlignTop
                     }
                 }
 
@@ -262,7 +260,7 @@ ApplicationWindow {
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
                     visible: text !== ""
-                    color: Material.secondaryTextColor
+                    color: fromTransliterationText.palette.placeholderText
 
                     text: {
                         let fromCode = fromLangCombo.currentValue
@@ -285,7 +283,7 @@ ApplicationWindow {
                     height: window.controlRowHeight
 
                     Button {
-                        Material.roundedScale: Material.SmallScale
+
                         id: pasteButton
                         icon.source: "qrc:/images/paste.png"
                         width: 28
@@ -299,7 +297,6 @@ ApplicationWindow {
                     }
 
                     Button {
-                        Material.roundedScale: Material.SmallScale
                         id: translateButton
                         text: qsTr("Translate")
                         width: 80
@@ -326,7 +323,7 @@ ApplicationWindow {
         // === SWAP BUTTON IN THE MIDDLE ===
         Button {
             id: swapButton
-            Material.roundedScale: Material.SmallScale
+
             icon.source: isLandscape ? "qrc:/images/arrow-left-right.png" : "qrc:/images/arrow-down-up.png"
             // If landscape => row=0, col=1
             // If portrait  => row=1, col=0
@@ -351,7 +348,7 @@ ApplicationWindow {
         // === RESULT FRAME ===
         Frame {
             id: toFrame
-            Material.roundedScale: Material.SmallScale
+
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -364,7 +361,7 @@ ApplicationWindow {
                 anchors.fill: parent
 
                 ComboBox {
-                    Material.roundedScale: Material.SmallScale
+
                     id: toLangCombo
                     width: 200
                     font.pixelSize: 12
@@ -385,7 +382,7 @@ ApplicationWindow {
                 }
 
                 ScrollView {
-                    Material.roundedScale: Material.SmallScale
+
                     id: resultScrollView
                     anchors.top: toLangCombo.bottom
                     anchors.left: parent.left
@@ -394,12 +391,12 @@ ApplicationWindow {
                     anchors.bottom: toTransliterationText.visible ? toTransliterationText.top : toBottomRow.top
 
                     TextArea {
-                        Material.roundedScale: Material.SmallScale
                         id: resultText
                         placeholderText: qsTr("Translation will appear here")
                         wrapMode: TextEdit.Wrap
                         readOnly: true
                         selectByMouse: true
+                        verticalAlignment: TextEdit.AlignTop
                     }
                 }
 
@@ -416,7 +413,7 @@ ApplicationWindow {
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
                     visible: text !== ""
-                    color: Material.secondaryTextColor
+                    color: toTransliterationText.palette.placeholderText
 
                     text: {
                         let toCode = toLangCombo.currentValue
@@ -443,7 +440,6 @@ ApplicationWindow {
                     }
 
                     Button {
-                        Material.roundedScale: Material.SmallScale
                         id: copyButton
                         icon.source: "qrc:/images/copy.png"
                         font.pixelSize: 12

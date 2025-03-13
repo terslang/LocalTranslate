@@ -12,6 +12,10 @@ find_package(marian-lite REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(ICU COMPONENTS uc i18n REQUIRED)
 
+# Configure mecab for usage
+execute_process(COMMAND mecab-config --cflags OUTPUT_VARIABLE MECAB_CFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND mecab-config --libs OUTPUT_VARIABLE MECAB_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 qt_add_executable(appLocalTranslate
     main.cpp resources.qrc
 )
@@ -30,8 +34,10 @@ set_target_properties(appLocalTranslate PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+target_compile_options(appLocalTranslate PRIVATE ${MECAB_CFLAGS})
+
 target_link_libraries(appLocalTranslate
-    PRIVATE Qt6::Quick kotki marian-lite yaml-cpp ICU::uc ICU::i18n)
+    PRIVATE Qt6::Quick kotki marian-lite yaml-cpp ICU::uc ICU::i18n ${MECAB_LIBS})
 
 install(TARGETS appLocalTranslate
     BUNDLE DESTINATION .

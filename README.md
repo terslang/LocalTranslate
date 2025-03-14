@@ -9,11 +9,13 @@ LocalTranslate uses Firefox’s neural translation models (from [mozilla/firefox
 </a>
 
 ## Screenshots
-![localtranslate-landscape-dark](https://terslang.github.io/LocalTranslate/localtranslate-dark-enzh.png)
+![localtranslate-landscape-dark](https://terslang.github.io/LocalTranslate/localtranslate-dark-enjp.png)
 ![localtranslate-portrait-light](https://terslang.github.io/LocalTranslate/localtranslate-light-ende.png)
 
 ## Built with (Thanks to)
 - [kroketio/kotki](https://github.com/kroketio/kotki)
 - [mozilla/firefox-translations-models](https://github.com/mozilla/firefox-translations-models)
+- [MeCab](https://github.com/taku910/mecab)
 - [Marian NMT](https://marian-nmt.github.io/)
+- [libICU](https://github.com/unicode-org/icu)
 - [Qt Quick](https://wiki.qt.io/Qt_Quick)

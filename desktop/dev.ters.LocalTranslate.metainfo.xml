@@ -17,7 +17,7 @@
   <url type="help">https://terslang.github.io/LocalTranslate/</url>  
   
   <description>
-    <p>LocalTranslate is an offline translation application that leverages Firefox's neural translation models from the mozilla/firefox-translations-models project. It allows you to perform translations locally on your device without the need for an internet connection, with reasonable response times and enhanced privacy.</p>
+    <p>LocalTranslate is an offline translation application that uses Firefox's neural translation models (from the mozilla/firefox-translations-models project) to perform high-quality translations locally on your device.</p>
 
     <p>LocalTranslate supports the following languages:</p>
 
@@ -76,13 +76,17 @@
   </keywords>
 
   <branding>
-    <color type="primary" scheme_preference="light">#af7faf</color>
-    <color type="primary" scheme_preference="dark">#a599a5</color>
+    <color type="primary" scheme_preference="light">#9d78c8</color>
+    <color type="primary" scheme_preference="dark">#503d70</color>
   </branding>
   
   <launchable type="desktop-id">dev.ters.LocalTranslate.desktop</launchable>
   <screenshots>
     <screenshot type="default">
+      <image>https://terslang.github.io/LocalTranslate/localtranslate-dark-enjp.png</image>
+      <caption>English to Japanese translation, landscape layout</caption>
+    </screenshot>  
+    <screenshot>
       <image>https://terslang.github.io/LocalTranslate/localtranslate-light-gren.png</image>
       <caption>Greek to English translation, landscape layout</caption>
     </screenshot>
@@ -93,14 +97,19 @@
     <screenshot>
       <image>https://terslang.github.io/LocalTranslate/localtranslate-light-ende.png</image>
       <caption>English to German translation, portrait layout</caption>
-    </screenshot>
-    <screenshot>
-      <image>https://terslang.github.io/LocalTranslate/localtranslate-dark-enzh.png</image>
-      <caption>English to Chinese translation, landscape layout</caption>
-    </screenshot>        
+    </screenshot>      
   </screenshots>
   
   <releases>
+    <release version="0.1.0" date="2025-03-14">
+      <description>
+        <ul>
+          <li>Fix Japanese transliteration (Add Mecab for segmentation)</li>
+          <li>Fix Swap button UI</li>
+          <li>Fix transliteration overlap issue</li>
+        </ul>
+      </description>
+    </release>    
     <release version="0.0.4" date="2025-03-12">
       <description>
         <ul>

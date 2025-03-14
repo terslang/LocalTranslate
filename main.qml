@@ -241,14 +241,18 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.bottom: fromBottomRow.top
                     anchors.bottomMargin: visible ? 4 : 0
-                    wrapMode: TextEdit.Wrap
                     leftPadding: 8
                     rightPadding: 8
                     topPadding: 4
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
-                    visible: text !== ""
                     color: window.palette.placeholderText
+                    visible: text !== ""
+
+                    wrapMode: Text.WordWrap
+                    elide: Text.ElideRight
+                    clip: true
+                    maximumLineCount: parent.height / 2 / (font.pixelSize * 1.5)
 
                     text: {
                         let fromCode = fromLangCombo.currentValue
@@ -372,7 +376,6 @@ ApplicationWindow {
                 }
 
                 ScrollView {
-
                     id: resultScrollView
                     anchors.top: toLangCombo.bottom
                     anchors.left: parent.left
@@ -396,14 +399,18 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.bottom: toBottomRow.top
                     anchors.bottomMargin: visible ? 4 : 0
-                    wrapMode: TextEdit.Wrap
                     leftPadding: 8
                     rightPadding: 8
                     topPadding: 4
                     horizontalAlignment: Text.AlignLeft
                     font.pointSize: 12
-                    visible: text !== ""
                     color: window.palette.placeholderText
+                    visible: text !== ""
+
+                    wrapMode: Text.WordWrap
+                    elide: Text.ElideRight
+                    clip: true
+                    maximumLineCount: parent.height / 2 / (font.pixelSize * 1.5)
 
                     text: {
                         let toCode = toLangCombo.currentValue

@@ -318,6 +318,8 @@ ApplicationWindow {
             Layout.row: isLandscape ? 0 : 1
             Layout.column: isLandscape ? 1 : 0
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.preferredWidth: window.isLandscape ? 40 : implicitWidth
+            Layout.preferredHeight: window.isLandscape ? 40 : implicitHeight
 
             onClicked: {
                 // If result text is not empty, move it to the source and clear it

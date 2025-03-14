@@ -5,8 +5,8 @@ import QtQuick.Controls.FluentWinUI3
 
 ApplicationWindow {
     id: window
-    width: 820 / 1.618
-    height: 820
+    width: 720 / 1.618
+    height: 720
     visible: true
     title: qsTr("LocalTranslate")
 

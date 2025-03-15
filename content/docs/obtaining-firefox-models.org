@@ -1,0 +1,79 @@
+#+TITLE: Obtaining Firefox Models
+#+DATE: 2025-03-15T12:05:41Z
+#+WEIGHT: 2
+
+* Prerequisites
+
+1. Make sure you have git-lfs installed
+#+begin_src bash
+  git lfs install
+#+end_src
+
+* Clone the repository
+#+begin_src bash
+  git clone https://github.com/mozilla/firefox-translations-models
+#+end_src
+
+Note: This will take a long time as git-lfs needs to pull all the models (~1.5 GB) from remote.
+
+Once the repository has been cloned, you'll find the models in ~firefox-translations-models/models~ like so:
+#+begin_example
+firefox-translations-models/models/
+├── dev
+│   ├── bsen
+│   │   ├── lex.50.50.bsen.s2t.bin.gz
+│   │   ├── model.bsen.intgemm.alphas.bin.gz
+│   │   └── vocab.bsen.spm.gz
+|   <... Omitted for brevity ...> 
+│   └── nnen
+│       ├── lex.50.50.nnen.s2t.bin.gz
+│       ├── model.nnen.intgemm.alphas.bin.gz
+│       └── vocab.nnen.spm.gz
+└── prod
+    ├── bgen
+    │   ├── lex.50.50.bgen.s2t.bin.gz
+    │   ├── model.bgen.intgemm.alphas.bin.gz
+    │   └── vocab.bgen.spm.gz
+    <... Omitted for brevity ...> 
+    └── zhen
+        ├── lex.50.50.zhen.s2t.bin.gz
+        ├── model.zhen.intgemm.alphas.bin.gz
+        └── vocab.zhen.spm.gz
+
+71 directories, 206 files
+#+end_example
+
+* Flatten the directory structure
+
+We need all the models, vocabs and shortlists in a single directory.
+We also need a ~registry.json~ associating models, vocabs and shortlists with language pairs.
+
+Use this [[https://gist.github.com/shriramters/ad53e3ede3553d7c0efd508da1fd48e7][github gist]] to flatten the folder structure and also to generate the ~registry.json~ file.
+save that bash script into ~firefox-translations-models/models/process-firefox-translation-models.sh~
+
+#+begin_src bash
+  cd firefox-translations-models/models/
+  chmod +x process-firefox-translation-models.sh
+  ./process-firefox-translation-models.sh
+#+end_src
+
+This should have created a new directory called ~flattened~ with all the models, vocabs and shortlists and a file outside this directory called ~registry.json~.
+
+* Verify your directory and registry.json
+
+Go through the directory and ~registry.json~ and check if everything looks valid.
+
+* Create the archive
+
+Archiving using these settings will take a long time. change the tar step if you wish to do a quicker compress. 
+
+#+begin_src bash
+  mv flattened/ firefox/ # rename the directory
+  mv registry.json firefox/
+  cp ../LICENSE firefox/ # copy MPL-2.0 into the archive direct
+  time tar -Jcvf firefox-models.tar.xz firefox/
+#+end_src
+
+The tar step took about 30 mins on my thinkpad x270.
+
+You'll find the archive ready in ~firefox-models.tar.xz~.

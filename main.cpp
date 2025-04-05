@@ -113,6 +113,8 @@ private:
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    QGuiApplication::setDesktopFileName(
+        "dev.ters.LocalTranslate"); // specify name of the desktop file
 
     TranslationBridge bridge;
 

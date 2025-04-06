@@ -101,6 +101,11 @@
   </screenshots>
   
   <releases>
+    <release version="0.1.1" date="2025-04-06">
+      <description>
+        Fix wayland missing app icon issue
+      </description>
+    </release>
     <release version="0.1.0" date="2025-03-14">
       <description>
         <ul>
@@ -109,7 +114,7 @@
           <li>Fix transliteration overlap issue</li>
         </ul>
       </description>
-    </release>    
+    </release>
     <release version="0.0.4" date="2025-03-12">
       <description>
         <ul>
@@ -119,7 +124,7 @@
           <li>Upgrade to Qt 6.8</li>
         </ul>
       </description>
-    </release>    
+    </release>
     <release version="0.0.3" date="2025-03-11">
       <description>
         <ul>

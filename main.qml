@@ -12,6 +12,9 @@ ApplicationWindow {
 
     // The original array of objects with code + name
     readonly property var languages: [{
+            "code": "ar",
+            "name": "Arabic"
+        }, {
             "code": "bg",
             "name": "Bulgarian"
         }, {
@@ -132,7 +135,7 @@ ApplicationWindow {
                                                > b.name ? 1 : (b.name > a.name ? -1 : 0))
 
     // Languages that don't use Latin script
-    readonly property var nonLatinLangs: ["bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
+    readonly property var nonLatinLangs: ["ar", "bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
 
     readonly property int controlRowHeight: 50
     readonly property bool isLandscape: width > height

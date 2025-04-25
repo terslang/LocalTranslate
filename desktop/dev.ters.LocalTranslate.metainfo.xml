@@ -22,6 +22,7 @@
     <p>LocalTranslate supports the following languages:</p>
 
     <ul>
+      <li>Arabic (ar)</li>
       <li>Bulgarian (bg)</li>
       <li>Bosnian (bs)</li>
       <li>Catalan (ca)</li>
@@ -101,6 +102,13 @@
   </screenshots>
   
   <releases>
+    <release version="0.2.0" date="2025-04-25">
+      <description>
+        <ul>
+          <li>Add Arabic (ar) language support</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.1" date="2025-04-06">
       <description>
         Fix wayland missing app icon issue

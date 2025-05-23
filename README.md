@@ -4,6 +4,8 @@ Translate offline using Firefox Translation Models.
 
 LocalTranslate uses Firefox’s neural translation models (from [mozilla/firefox-translations-models](https://github.com/mozilla/firefox-translations-models)) to perform high-quality translations locally on your device.
 
+_Kindly note that LocalTranslate is not affiliated with The Mozilla Foundation in any way. LocalTranslate is just a wrapper which lets you natively use Firefox’s neural translation models._
+
 <a href='https://flathub.org/apps/dev.ters.LocalTranslate'>
   <img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/>
 </a>

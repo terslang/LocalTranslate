@@ -19,6 +19,8 @@
   <description>
     <p>LocalTranslate is an offline translation application that uses Firefox's neural translation models (from the mozilla/firefox-translations-models project) to perform high-quality translations locally on your device.</p>
 
+    <p>Note: LocalTranslate is not affiliated with The Mozilla Foundation in any way.</p>
+    
     <p>LocalTranslate supports the following languages:</p>
 
     <ul>

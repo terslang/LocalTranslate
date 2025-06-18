@@ -15,8 +15,17 @@ ApplicationWindow {
             "code": "ar",
             "name": "Arabic"
         }, {
+            "code": "az",
+            "name": "Azerbaijani"
+        }, {
+            "code": "be",
+            "name": "Belarusian"
+        }, {
             "code": "bg",
             "name": "Bulgarian"
+        }, {
+            "code": "bn",
+            "name": "Bengali"
         }, {
             "code": "bs",
             "name": "Bosnian"
@@ -54,6 +63,15 @@ ApplicationWindow {
             "code": "fr",
             "name": "French"
         }, {
+            "code": "gu",
+            "name": "Gujarati"
+        }, {
+            "code": "he",
+            "name": "Hebrew"
+        }, {
+            "code": "hi",
+            "name": "Hindi"
+        }, {
             "code": "hr",
             "name": "Croatian"
         }, {
@@ -72,6 +90,9 @@ ApplicationWindow {
             "code": "ja",
             "name": "Japanese"
         }, {
+            "code": "kn",
+            "name": "Kannada"
+        }, {
             "code": "ko",
             "name": "Korean"
         }, {
@@ -80,6 +101,12 @@ ApplicationWindow {
         }, {
             "code": "lv",
             "name": "Latvian"
+        }, {
+            "code": "ml",
+            "name": "Malayalam"
+        }, {
+            "code": "ms",
+            "name": "Malay"
         }, {
             "code": "mt",
             "name": "Maltese"
@@ -111,11 +138,20 @@ ApplicationWindow {
             "code": "sl",
             "name": "Slovenian"
         }, {
+            "code": "sq",
+            "name": "Albanian"
+        }, {
             "code": "sr",
             "name": "Serbian"
         }, {
             "code": "sv",
             "name": "Swedish"
+        }, {
+            "code": "ta",
+            "name": "Tamil"
+        }, {
+            "code": "te",
+            "name": "Telugu"
         }, {
             "code": "tr",
             "name": "Turkish"
@@ -135,7 +171,7 @@ ApplicationWindow {
                                                > b.name ? 1 : (b.name > a.name ? -1 : 0))
 
     // Languages that don't use Latin script
-    readonly property var nonLatinLangs: ["ar", "bg", "el", "fa", "ja", "ko", "ru", "uk", "zh", "sr", "mt"]
+    readonly property var nonLatinLangs: ["ar", "be", "bg", "bn", "el", "fa", "gu", "he", "hi", "ja", "kn", "ko", "ml", "mt", "ru", "sr", "ta", "te", "uk", "zh"]
 
     readonly property int controlRowHeight: 50
     readonly property bool isLandscape: width > height

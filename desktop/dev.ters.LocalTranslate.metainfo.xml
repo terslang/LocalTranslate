@@ -25,7 +25,10 @@
 
     <ul>
       <li>Arabic (ar)</li>
+      <li>Azerbaijani (az)</li>
+      <li>Belarusian (be)</li>
       <li>Bulgarian (bg)</li>
+      <li>Bengali (bn)</li>
       <li>Bosnian (bs)</li>
       <li>Catalan (ca)</li>
       <li>Czech (cs)</li>
@@ -38,15 +41,21 @@
       <li>Persian (fa)</li>
       <li>Finnish (fi)</li>
       <li>French (fr)</li>
+      <li>Gujarati (gu)</li>
+      <li>Hebrew (he)</li>
+      <li>Hindi (hi)</li>
       <li>Croatian (hr)</li>
       <li>Hungarian (hu)</li>
       <li>Indonesian (id)</li>
       <li>Icelandic (is)</li>
       <li>Italian (it)</li>
       <li>Japanese (ja)</li>
+      <li>Kannada (kn)</li>
       <li>Korean (ko)</li>
       <li>Lithuanian (lt)</li>
       <li>Latvian (lv)</li>
+      <li>Malayalam (ml)</li>
+      <li>Malay (ms)</li>
       <li>Maltese (mt)</li>
       <li>Norwegian Bokmål (nb)</li>
       <li>Dutch (nl)</li>
@@ -57,8 +66,11 @@
       <li>Russian (ru)</li>
       <li>Slovak (sk)</li>
       <li>Slovenian (sl)</li>
+      <li>Albanian (sq)</li>
       <li>Serbian (sr)</li>
       <li>Swedish (sv)</li>
+      <li>Tamil (ta)</li>
+      <li>Telugu (te)</li>
       <li>Turkish (tr)</li>
       <li>Ukrainian (uk)</li>
       <li>Vietnamese (vi)</li>
@@ -104,6 +116,24 @@
   </screenshots>
   
   <releases>
+    <release version="0.3.0" date="2025-06-18">
+      <description>
+        <ul>
+          <li>Add Azerbaijani (az) language support</li>
+          <li>Add Belarusian (be) language support</li>
+          <li>Add Bengali (bn) language support</li>
+          <li>Add Gujarati (gu) language support</li>
+          <li>Add Hebrew (he) language support</li>
+          <li>Add Hindi (hi) language support</li>
+          <li>Add Kannada (kn) language support</li>
+          <li>Add Malayalam (ml) language support</li>
+          <li>Add Malay (ms) language support</li>
+          <li>Add Albanian (sq) language support</li>
+          <li>Add Tamil (ta) language support</li>
+          <li>Add Telugu (te) language support</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.2.0" date="2025-04-25">
       <description>
         <ul>

@@ -116,6 +116,13 @@
   </screenshots>
   
   <releases>
+    <release version="0.3.1" date="2025-07-14">
+      <description>
+        <ul>
+          <li>Add en-xx languages which were missing from previous release</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.3.0" date="2025-06-18">
       <description>
         <ul>

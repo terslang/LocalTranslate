@@ -1,6 +1,10 @@
-#+TITLE: Obtaining Firefox Models
+#+TITLE: Obtaining Firefox Models (for packagers only)
 #+DATE: 2025-03-15T12:05:41Z
 #+WEIGHT: 2
+
+#+begin_quote
+Note: The instructions below are meant for packagers.
+#+end_quote
 
 * Prerequisites
 

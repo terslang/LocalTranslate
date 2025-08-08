@@ -116,6 +116,11 @@
   </screenshots>
   
   <releases>
+    <release version="0.3.2" date="2025-08-08">
+      <description>
+        <p>Fix appstream metainfo lint errors</p>
+      </description>
+    </release>
     <release version="0.3.1" date="2025-07-14">
       <description>
         <ul>
@@ -150,7 +155,7 @@
     </release>
     <release version="0.1.1" date="2025-04-06">
       <description>
-        Fix wayland missing app icon issue
+        <p>Fix wayland missing app icon issue</p>
       </description>
     </release>
     <release version="0.1.0" date="2025-03-14">
@@ -182,12 +187,12 @@
     </release>
     <release version="0.0.2" date="2025-03-10">
       <description>
-        Fix copy button issue
+        <p>Fix copy button issue</p>
       </description>
     </release>
     <release version="0.0.1" date="2025-03-09">
       <description>
-        Initial Release
+        <p>Initial Release</p>
       </description>
     </release>
   </releases>

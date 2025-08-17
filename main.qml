@@ -176,6 +176,24 @@ ApplicationWindow {
     readonly property int controlRowHeight: 50
     readonly property bool isLandscape: width > height
 
+    function doTranslate() {
+        if (sourceText.text.trim() === "")
+            return
+        let fromLangCode = fromLangCombo.currentValue
+        let toLangCode = toLangCombo.currentValue
+        let langPair = fromLangCode + toLangCode
+
+        let result = translationBridge.translate(
+                sourceText.text, langPair)
+        resultText.text = result
+    }
+
+    Shortcut {
+        sequences: ["Ctrl+Enter", "Ctrl+Return"]
+        context: Qt.ApplicationShortcut
+        onActivated: window.doTranslate()
+    }
+
     RowLayout {
         id: topRow
         anchors.top: parent.top
@@ -314,7 +332,6 @@ ApplicationWindow {
                     height: window.controlRowHeight
 
                     Button {
-
                         id: pasteButton
                         icon.source: "qrc:/images/paste.png"
                         width: 28
@@ -335,17 +352,11 @@ ApplicationWindow {
                         highlighted: true
                         font.pixelSize: 12
                         font.bold: true
-                        onClicked: {
-                            if (sourceText.text.trim() === "")
-                                return
-                            let fromLangCode = fromLangCombo.currentValue
-                            let toLangCode = toLangCombo.currentValue
-                            let langPair = fromLangCode + toLangCode
+                        onClicked: window.doTranslate()
 
-                            let result = translationBridge.translate(
-                                    sourceText.text, langPair)
-                            resultText.text = result
-                        }
+                        ToolTip.visible: hovered
+                        ToolTip.text: qsTr("Ctrl+Enter")
+                        ToolTip.delay: 300
                     }
                 }
             }

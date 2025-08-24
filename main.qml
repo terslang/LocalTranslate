@@ -1,4 +1,5 @@
 import QtQuick
+import QtCore
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Controls.FluentWinUI3
@@ -9,6 +10,17 @@ ApplicationWindow {
     height: 720
     visible: true
     title: qsTr("LocalTranslate")
+
+    Settings {
+        id: generalSettings
+        category: "General"     // casing is important here
+
+        property alias windowWidth: window.width
+        property alias windowHeight: window.height
+
+        property string fromLangCode
+        property string toLangCode
+    }
 
     // The original array of objects with code + name
     readonly property var languages: [{
@@ -183,8 +195,7 @@ ApplicationWindow {
         let toLangCode = toLangCombo.currentValue
         let langPair = fromLangCode + toLangCode
 
-        let result = translationBridge.translate(
-                sourceText.text, langPair)
+        let result = translationBridge.translate(sourceText.text, langPair)
         resultText.text = result
     }
 
@@ -265,10 +276,18 @@ ApplicationWindow {
                     model: window.sortedLanguages
                     textRole: "name"
                     valueRole: "code"
-                    currentIndex: window.sortedLanguages.findIndex(
-                                      lang => lang.code === "en")
 
-                    onCurrentIndexChanged: {
+                    Component.onCompleted: {
+                        const langCode = generalSettings.fromLangCode || "en"
+                        currentIndex = window.sortedLanguages.findIndex(
+                                    lang => lang.code === langCode)
+
+                        // set the lang in settings too
+                        generalSettings.fromLangCode = langCode
+                    }
+
+                    onActivated: (index) => {
+                        generalSettings.fromLangCode = model[currentIndex].code
                         // Clear the existing result
                         resultText.text = ""
                     }
@@ -386,6 +405,10 @@ ApplicationWindow {
                 var oldIndex = fromLangCombo.currentIndex
                 fromLangCombo.currentIndex = toLangCombo.currentIndex
                 toLangCombo.currentIndex = oldIndex
+
+                // Update settings too
+                generalSettings.fromLangCode = sortedLanguages[fromLangCombo.currentIndex].code
+                generalSettings.toLangCode = sortedLanguages[toLangCombo.currentIndex].code
             }
         }
 
@@ -405,7 +428,6 @@ ApplicationWindow {
                 anchors.fill: parent
 
                 ComboBox {
-
                     id: toLangCombo
                     width: 200
                     font.pixelSize: 12
@@ -417,10 +439,19 @@ ApplicationWindow {
                     model: window.sortedLanguages
                     textRole: "name"
                     valueRole: "code"
-                    currentIndex: window.sortedLanguages.findIndex(
-                                      lang => lang.code === "de")
 
-                    onCurrentIndexChanged: {
+                    Component.onCompleted: {
+                        const langCode = generalSettings.toLangCode || "de"
+                        currentIndex = window.sortedLanguages.findIndex(
+                                    lang => lang.code === langCode)
+
+                        // set the lang in settings too
+                        generalSettings.toLangCode = langCode
+                    }
+
+                    onActivated: (index) => {
+                        generalSettings.toLangCode = model[currentIndex].code
+                        // Clear the existing result
                         resultText.text = ""
                     }
                 }

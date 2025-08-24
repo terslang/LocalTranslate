@@ -116,6 +116,14 @@
   </screenshots>
   
   <releases>
+    <release version="0.4.0" date="2025-08-24">
+      <description>
+        <ul>
+          <li>Add QSettings to persist window size and last used languages</li>
+          <li>Add ctrl+enter keybinding for translation</li>
+        </ul>
+      </description>
+    </release>    
     <release version="0.3.2" date="2025-08-08">
       <description>
         <p>Fix appstream metainfo lint errors</p>

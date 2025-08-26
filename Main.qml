@@ -22,6 +22,10 @@ ApplicationWindow {
         property string toLangCode
     }
 
+    Component.onCompleted: {
+        sourceText.forceActiveFocus();      // focus on source text as soon as app launches
+    }
+
     // The original array of objects with code + name
     readonly property var languages: [{
             "code": "ar",

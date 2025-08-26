@@ -6,7 +6,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.8 COMPONENTS Quick REQUIRED)
+# Setup Qt Project
+find_package(Qt6 REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES 6.8)
+
 find_package(kotki REQUIRED)
 find_package(marian-lite REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -23,7 +26,7 @@ qt_add_executable(appLocalTranslate
 qt_add_qml_module(appLocalTranslate
     URI LocalTranslate
     VERSION 1.0
-    QML_FILES main.qml
+    QML_FILES Main.qml
 )
 
 set_target_properties(appLocalTranslate PROPERTIES

@@ -128,13 +128,13 @@ int main(int argc, char *argv[])
     // Expose the bridge to QML
     engine.rootContext()->setContextProperty("translationBridge", &bridge);
 
-    const QUrl url(u"qrc:/LocalTranslate/main.qml"_qs);
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
-        if (!obj && url == objUrl)
-            QCoreApplication::exit(-1);
-    }, Qt::QueuedConnection);
+    QObject::connect(
+        &engine,
+        &QQmlApplicationEngine::objectCreationFailed,
+        &app,
+        []() { QCoreApplication::exit(-1); },
+        Qt::QueuedConnection);
+    engine.loadFromModule("LocalTranslate", "Main");
 
-    engine.load(url);
     return app.exec();
 }

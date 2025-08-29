@@ -203,10 +203,23 @@ ApplicationWindow {
         resultText.text = result
     }
 
+    function clearText() {
+        sourceText.clear()
+        resultText.clear()
+        sourceText.forceActiveFocus()
+    }
+
     Shortcut {
         sequences: ["Ctrl+Enter", "Ctrl+Return"]
         context: Qt.ApplicationShortcut
         onActivated: window.doTranslate()
+    }
+
+    Shortcut {
+        // Pressing Ctrl+D will clear source and release text and focuses on the source text
+        sequences: ["Ctrl+D"]
+        context: Qt.ApplicationShortcut
+        onActivated: window.clearText()
     }
 
     RowLayout {

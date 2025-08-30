@@ -38,6 +38,11 @@ set_target_properties(appLocalTranslate PROPERTIES
 )
 
 target_compile_options(appLocalTranslate PRIVATE ${MECAB_CFLAGS})
+# This regex checks if the processor is "aarch64" OR starts with "arm"
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm)")
+    message(STATUS "ARM architecture detected (${CMAKE_SYSTEM_PROCESSOR}), adding ARM definition.")
+    target_compile_definitions(appLocalTranslate PRIVATE ARM)
+endif()
 
 target_link_libraries(appLocalTranslate
     PRIVATE Qt6::Quick kotki marian-lite yaml-cpp ICU::uc ICU::i18n ${MECAB_LIBS})

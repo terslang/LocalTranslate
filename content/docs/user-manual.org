@@ -1,0 +1,51 @@
+#+TITLE: User Manual
+#+DATE: 2025-09-09T23:24:10+05:30
+#+WEIGHT: 2
+
+LocalTranslate is very intuitive to use, it doesn't need a manual. Consider this an overview of features.
+
++ LocalTranslate in landscape
+[[../../localtranslate-dark-enjp.png]]
+
+
+* Navigation
+
++ LocalTranslate has two sections. Input and Result sections.
+  + The section on the left (top if the app is in portrait) is for input.
+  + The section on the right (bottom if the app is in portrait) is for show results.
+
++ The dropdown in the input section is used to select the source language and the dropdown in the results section is used to select the target
+  language (The languages are listed in alphabetical order).
+
++ The Swap button in the middle can be used to swap the source and target languages.
+
++ There is a paste button at the bottom of the input section using which copied text can be pasted into the input.
+
++ There is a copy button at the bottom of the result section using which result can be copied to the clipboard.
+
++ At the right bottom of the input section you can find a button that says ~Translate~ and of course it performs the translation.
+
+
+* Basic Usage
+
++ Select the source and target languages using the dropdowns from input and result sections.
+  
++ Write or paste the text into the input section.
+
++ Click on the ~Translate~ button (Ctrl+Enter / Ctrl+Return can be used too).
+
++ The translation appears in the results section.
+  
++ If the translation model is not available you might see an error in the result section instead.
+  + Ex: Language pair uken not available
+
++ All the languages that use a script that's not latin will show transliteration in english. Like how the image above has transliteration for
+  Japanese.
+
++ Swapping languages will swap the source and target languages and the text in result section will be moved to input and result section will be
+  cleared.
+
+** Keybindings
+
++ ~Ctrl+Enter~ / ~Ctrl+Return~ - This will translate the text
++ ~Ctrl+D~ - This will clear all the text fields and returns the focus to the input field

@@ -4,15 +4,20 @@
 
 [[localtranslate-banner.png]]
 
-LocalTranslate is an offline translation application that uses Firefox’s neural translation models
+[[https://github.com/terslang/LocalTranslate][LocalTranslate]] is an offline translation application that uses Firefox’s neural translation models
 (from [[https://github.com/mozilla/firefox-translations-models][mozilla/firefox-translations-models]]) to perform high-quality translations locally on your
 device.
 
+#+begin_quote
+/Kindly note that LocalTranslate is not affiliated with The Mozilla Foundation in any way.
+LocalTranslate is just a wrapper which lets you natively use Firefox’s neural translation models./
+#+end_quote
+
 * Built With (Thanks to)
-- [[https://github.com/kroketio/kotki][kroketio/kotki]]
+- [[https://github.com/terslang/kotki][terslang/kotki]] (fork of [[https://github.com/kroketio/kotki][kroketio/kotki]])
+- [[https://github.com/terslang/marian-lite][terslang/marian-lite]] (fork of [[https://github.com/kroketio/marian-lite][kroketio/marian-lite]])
 - [[https://github.com/mozilla/firefox-translations-models][mozilla/firefox-translations-models]]
 - [[https://github.com/taku910/mecab][MeCab]]
-- [[https://marian-nmt.github.io/][Marian NMT]]
 - [[https://github.com/unicode-org/icu][libICU]]
 - [[https://wiki.qt.io/Qt_Quick][Qt Quick]]
 
@@ -24,7 +29,11 @@ pairs.
 
 ** Language List
 
+- Arabic (ar)
+- Azerbaijani (az)
+- Belarusian (be)
 - Bulgarian (bg)
+- Bengali (bn)
 - Bosnian (bs)
 - Catalan (ca)
 - Czech (cs)
@@ -37,15 +46,21 @@ pairs.
 - Persian (fa)
 - Finnish (fi)
 - French (fr)
+- Gujarati (gu)
+- Hebrew (he)
+- Hindi (hi)
 - Croatian (hr)
 - Hungarian (hu)
 - Indonesian (id)
 - Icelandic (is)
 - Italian (it)
 - Japanese (ja)
+- Kannada (kn)
 - Korean (ko)
 - Lithuanian (lt)
 - Latvian (lv)
+- Malayalam (ml)
+- Malay (ms)
 - Maltese (mt)
 - Norwegian Bokmål (nb)
 - Dutch (nl)
@@ -56,8 +71,11 @@ pairs.
 - Russian (ru)
 - Slovak (sk)
 - Slovenian (sl)
+- Albanian (sq)
 - Serbian (sr)
 - Swedish (sv)
+- Tamil (ta)
+- Telugu (te)
 - Turkish (tr)
 - Ukrainian (uk)
 - Vietnamese (vi)

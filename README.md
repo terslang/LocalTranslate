@@ -15,9 +15,9 @@ _Kindly note that LocalTranslate is not affiliated with The Mozilla Foundation i
 ![localtranslate-portrait-light](https://terslang.github.io/LocalTranslate/localtranslate-light-ende.png)
 
 ## Built with (Thanks to)
-- [kroketio/kotki](https://github.com/kroketio/kotki)
+- [terslang/kotki](https://github.com/terslang/kotki) (fork of [kroketio/kotki](https://github.com/kroketio/kotki))
+- [terslang/marian-lite](https://github.com/terslang/marian-lite) (fork of [kroketio/marian-lite](https://github.com/kroketio/marian-lite))
 - [mozilla/firefox-translations-models](https://github.com/mozilla/firefox-translations-models)
 - [MeCab](https://github.com/taku910/mecab)
-- [Marian NMT](https://marian-nmt.github.io/)
 - [libICU](https://github.com/unicode-org/icu)
 - [Qt Quick](https://wiki.qt.io/Qt_Quick)

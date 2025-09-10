@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(LocalTranslate VERSION 0.1 LANGUAGES CXX)
+project(LocalTranslate VERSION 0.5.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)

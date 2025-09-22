@@ -63,6 +63,6 @@ Comment[uk]=Локальний офлайн машинний переклада�
 Comment[zh_CN]=本地离线机器翻译器
 Comment[zh_TW]=本地離線機器翻譯器
 Icon=localtranslate
-Exec=appLocalTranslate
+Exec=localtranslate
 Categories=Utility;Education;
 Keywords=Translate;Translator;Offline;Machine Translation;Language;Text;Local;AI;Speech;Dictionary;

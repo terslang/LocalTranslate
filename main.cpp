@@ -240,8 +240,6 @@ int main(int argc, char *argv[]) {
         QGuiApplication::setDesktopFileName(
             "dev.ters.LocalTranslate"); // specify name of the desktop file
 
-        TranslationBridge bridge;
-
         QQmlApplicationEngine engine;
 
         // Expose the bridge to QML

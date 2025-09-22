@@ -19,17 +19,17 @@ find_package(ICU COMPONENTS uc i18n REQUIRED)
 execute_process(COMMAND mecab-config --cflags OUTPUT_VARIABLE MECAB_CFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND mecab-config --libs OUTPUT_VARIABLE MECAB_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-qt_add_executable(appLocalTranslate
+qt_add_executable(localtranslate
     main.cpp resources.qrc
 )
 
-qt_add_qml_module(appLocalTranslate
+qt_add_qml_module(localtranslate
     URI LocalTranslate
     VERSION 1.0
     QML_FILES Main.qml
 )
 
-set_target_properties(appLocalTranslate PROPERTIES
+set_target_properties(localtranslate PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -37,17 +37,17 @@ set_target_properties(appLocalTranslate PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_compile_options(appLocalTranslate PRIVATE ${MECAB_CFLAGS})
+target_compile_options(localtranslate PRIVATE ${MECAB_CFLAGS})
 # This regex checks if the processor is "aarch64" OR starts with "arm"
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm)")
     message(STATUS "ARM architecture detected (${CMAKE_SYSTEM_PROCESSOR}), adding ARM definition.")
-    target_compile_definitions(appLocalTranslate PRIVATE ARM)
+    target_compile_definitions(localtranslate PRIVATE ARM)
 endif()
 
-target_link_libraries(appLocalTranslate
+target_link_libraries(localtranslate
     PRIVATE Qt6::Quick kotki marian-lite yaml-cpp ICU::uc ICU::i18n ${MECAB_LIBS})
 
-install(TARGETS appLocalTranslate
+install(TARGETS localtranslate
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 

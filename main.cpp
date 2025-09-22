@@ -1,9 +1,14 @@
+#include <initializer_list>
+
 #include <QDebug>
 #include <QDir>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QStandardPaths>
+#include <QCommandLineParser>
+#include <QTextStream>
+
 #include <kotki/kotki.h>
 #include <mecab.h>
 #include <memory>
@@ -13,6 +18,7 @@
 class TranslationBridge : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QVariantList languages READ languages CONSTANT)
 public:
     explicit TranslationBridge(QObject *parent = nullptr) : QObject(parent) {
         kotki = std::make_unique<Kotki>();
@@ -27,6 +33,69 @@ public:
         }
 
         kotki->scan(std::filesystem::path(registryFile.toStdString()));
+    }
+
+    QVariantList languages() const {
+        QVariantList langList;
+        const std::initializer_list<std::pair<const char*, const char*>> languageData = {
+            {"ar", "Arabic"},
+            {"az", "Azerbaijani"},
+            {"be", "Belarusian"},
+            {"bg", "Bulgarian"},
+            {"bn", "Bengali"},
+            {"bs", "Bosnian"},
+            {"ca", "Catalan"},
+            {"cs", "Czech"},
+            {"da", "Danish"},
+            {"de", "German"},
+            {"el", "Greek"},
+            {"en", "English"},
+            {"es", "Spanish"},
+            {"et", "Estonian"},
+            {"fa", "Persian"},
+            {"fi", "Finnish"},
+            {"fr", "French"},
+            {"gu", "Gujarati"},
+            {"he", "Hebrew"},
+            {"hi", "Hindi"},
+            {"hr", "Croatian"},
+            {"hu", "Hungarian"},
+            {"id", "Indonesian"},
+            {"is", "Icelandic"},
+            {"it", "Italian"},
+            {"ja", "Japanese"},
+            {"kn", "Kannada"},
+            {"ko", "Korean"},
+            {"lt", "Lithuanian"},
+            {"lv", "Latvian"},
+            {"ml", "Malayalam"},
+            {"ms", "Malay"},
+            {"mt", "Maltese"},
+            {"nb", "Norwegian Bokmål"},
+            {"nl", "Dutch"},
+            {"nn", "Norwegian Nynorsk"},
+            {"pl", "Polish"},
+            {"pt", "Portuguese"},
+            {"ro", "Romanian"},
+            {"ru", "Russian"},
+            {"sk", "Slovak"},
+            {"sl", "Slovenian"},
+            {"sq", "Albanian"},
+            {"sr", "Serbian"},
+            {"sv", "Swedish"},
+            {"ta", "Tamil"},
+            {"te", "Telugu"},
+            {"tr", "Turkish"},
+            {"uk", "Ukrainian"},
+            {"vi", "Vietnamese"},
+            {"zh", "Chinese"}
+        };
+
+        for (const auto &lang : languageData) {
+            langList.append(QVariantMap{{"code", lang.first}, {"name", lang.second}});
+        }
+
+        return langList;
     }
 
     Q_INVOKABLE QString translate(const QString &text, const QString &langPair) const
@@ -109,13 +178,7 @@ private:
 
 #include "main.moc"
 
-
-int main(int argc, char *argv[])
-{
-    QGuiApplication app(argc, argv);
-    QGuiApplication::setDesktopFileName(
-        "dev.ters.LocalTranslate"); // specify name of the desktop file
-
+int main(int argc, char *argv[]) {
     // Specify org details
     QCoreApplication::setOrganizationName("ters");
     QCoreApplication::setOrganizationDomain("ters.dev");
@@ -123,18 +186,75 @@ int main(int argc, char *argv[])
 
     TranslationBridge bridge;
 
-    QQmlApplicationEngine engine;
+    if (argc > 1) { // CLI mode
+        QCoreApplication app(argc, argv);
+        QCommandLineParser parser;
+        parser.setApplicationDescription("LocalTranslate CLI-mode");
+        parser.addHelpOption();
 
-    // Expose the bridge to QML
-    engine.rootContext()->setContextProperty("translationBridge", &bridge);
+        QCommandLineOption fromOption(
+            "from", "Source language code.", "from");
+        parser.addOption(fromOption);
 
-    QObject::connect(
-        &engine,
-        &QQmlApplicationEngine::objectCreationFailed,
-        &app,
-        []() { QCoreApplication::exit(-1); },
-        Qt::QueuedConnection);
-    engine.loadFromModule("LocalTranslate", "Main");
+        QCommandLineOption toOption("to", "Target language code.", "to");
+        parser.addOption(toOption);
 
-    return app.exec();
+        QCommandLineOption listLanguagesOption("list-languages",
+                                               "List available languages.");
+        parser.addOption(listLanguagesOption);
+
+        parser.process(app);
+        QTextStream out(stdout);
+
+        if (parser.isSet(listLanguagesOption)) {
+            QVariantList languages = bridge.languages();
+            for (const QVariant &lang : languages) {
+                QVariantMap langMap = lang.toMap();
+                out << langMap["code"].toString() << "\t" << langMap["name"].toString()
+                    << Qt::endl;
+            }
+            return 0;
+        }
+
+        const QString from = parser.value(fromOption);
+        const QString to = parser.value(toOption);
+        const QStringList args = parser.positionalArguments();
+
+        if (!from.isEmpty() && !to.isEmpty()) {
+            QString textToTranslate;
+            if (args.isEmpty()) {
+                QTextStream in(stdin);
+                textToTranslate = in.readAll();
+            } else {
+                textToTranslate = args.join(' ');
+            }
+            QString translatedText =
+                bridge.translate(textToTranslate, from + to);
+            out << translatedText << Qt::endl;
+            return 0;
+        } else {
+            parser.showHelp(1);
+        }
+    } else { // GUI mode
+        QGuiApplication app(argc, argv);
+        QGuiApplication::setDesktopFileName(
+            "dev.ters.LocalTranslate"); // specify name of the desktop file
+
+        TranslationBridge bridge;
+
+        QQmlApplicationEngine engine;
+
+        // Expose the bridge to QML
+        engine.rootContext()->setContextProperty("translationBridge", &bridge);
+
+        QObject::connect(
+            &engine,
+            &QQmlApplicationEngine::objectCreationFailed,
+            &app,
+            []() { QCoreApplication::exit(-1); },
+            Qt::QueuedConnection);
+        engine.loadFromModule("LocalTranslate", "Main");
+
+        return app.exec();
+    }
 }

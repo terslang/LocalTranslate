@@ -15,6 +15,8 @@
 #include <unicode/translit.h>
 #include <unicode/unistr.h>
 
+#include "config.hpp"
+
 class TranslationBridge : public QObject
 {
     Q_OBJECT
@@ -183,6 +185,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setOrganizationName("ters");
     QCoreApplication::setOrganizationDomain("ters.dev");
     QCoreApplication::setApplicationName("LocalTranslate");
+    QCoreApplication::setApplicationVersion(LOCALTRANSLATE_VERSION);
 
     TranslationBridge bridge;
 
@@ -191,6 +194,7 @@ int main(int argc, char *argv[]) {
         QCommandLineParser parser;
         parser.setApplicationDescription("LocalTranslate CLI-mode");
         parser.addHelpOption();
+        parser.addVersionOption();
 
         QCommandLineOption fromOption(
             "from", "Source language code.", "from");

@@ -1,0 +1,6 @@
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
+
+#define LOCALTRANSLATE_VERSION "@LocalTranslate_VERSION@"
+
+#endif // CONFIG_HPP

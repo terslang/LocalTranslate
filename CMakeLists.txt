@@ -19,6 +19,8 @@ find_package(ICU COMPONENTS uc i18n REQUIRED)
 execute_process(COMMAND mecab-config --cflags OUTPUT_VARIABLE MECAB_CFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND mecab-config --libs OUTPUT_VARIABLE MECAB_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+configure_file(config.hpp.in config/config.hpp)
+
 qt_add_executable(localtranslate
     main.cpp resources.qrc
 )
@@ -27,7 +29,10 @@ qt_add_qml_module(localtranslate
     URI LocalTranslate
     VERSION 1.0
     QML_FILES Main.qml
+    RESOURCES config.hpp.in
 )
+
+target_include_directories(localtranslate PRIVATE ${LocalTranslate_BINARY_DIR}/config)
 
 set_target_properties(localtranslate PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

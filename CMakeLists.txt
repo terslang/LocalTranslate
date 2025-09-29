@@ -30,6 +30,8 @@ qt_add_qml_module(localtranslate
     VERSION 1.0
     QML_FILES Main.qml
     RESOURCES config.hpp.in
+    SOURCES translation_bridge.hpp
+    SOURCES translation_bridge.cpp
 )
 
 target_include_directories(localtranslate PRIVATE ${LocalTranslate_BINARY_DIR}/config)

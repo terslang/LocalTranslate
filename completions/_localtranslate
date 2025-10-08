@@ -1,0 +1,54 @@
+#compdef localtranslate
+
+_localtranslate() {
+    local cur prev
+    cur=${words[CURRENT]}
+    prev=${words[CURRENT-1]}
+    
+    # Check for exclusive options that terminate completion
+    if (( ${words[(I)-h|--help|--help-all|-v|--version|--list-languages]} )); then
+        return 0 
+    fi
+
+    # Handle language code completion
+    case "$prev" in
+        --from|--to)
+            # Get language codes and their names for descriptions
+            local -a lang_codes
+            lang_codes=("${(@f)$(localtranslate --list-languages | awk '{desc=$0; sub($1"\\s+", "", desc); printf "%s:%s\n", $1, desc}')}")
+            _describe 'language' lang_codes
+            return 0
+            ;;
+    esac
+
+    # Build the list of next valid options
+    local -a opts
+    local from_present=${words[(I)--from]}
+    local to_present=${words[(I)--to]}
+
+    if (( from_present && to_present )); then
+        # Both are present, no more options to suggest.
+        opts=()
+    elif (( from_present )); then
+        # Only --from is present, suggest --to
+        opts=('--to:Set target language')
+    elif (( to_present )); then
+        # Only --to is present, suggest --from
+        opts=('--from:Set source language')
+    else
+        # Neither is present, suggest all initial options
+        opts=(
+            '--from:Set source language'
+            '--to:Set target language'
+            '--help:Show help message'
+            '-h:Show help message'
+            '--version:Show version information'
+            '-v:Show version information'
+            '--list-languages:List available languages'
+            '--help-all:Show all help options'
+        )
+    fi
+
+    # Offer the computed options for completion
+    _describe 'options' opts
+}

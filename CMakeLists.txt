@@ -113,3 +113,21 @@ if(UNIX AND NOT APPLE)
     FILES desktop/dev.ters.LocalTranslate.metainfo.xml
     DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 endif()
+
+# Install Completion Files for Linux (Unix but not Apple)
+if(UNIX AND NOT APPLE)
+  # For bash
+  install(
+    FILES completions/localtranslate.bash
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/bash-completion/completions)
+
+  # For zsh
+  install(
+    FILES completions/_localtranslate
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/zsh/site-functions)
+
+  #For fish
+  install(
+    FILES completions/localtranslate.fish
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/fish/vendor_completions.d)
+endif()

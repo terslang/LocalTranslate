@@ -1,6 +1,6 @@
 #+TITLE: Quickstart Guide
 #+DATE: 2025-09-09T23:24:10+05:30
-#+WEIGHT: 3
+#+WEIGHT: 2
 
 Currently, localtranslate is only offered as a flatpak. You can find it on [[https://flathub.org/apps/dev.ters.LocalTranslate][Flathub]].
 

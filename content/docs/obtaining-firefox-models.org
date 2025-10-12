@@ -1,6 +1,6 @@
 #+TITLE: Obtaining Firefox Models (for packagers only)
 #+DATE: 2025-03-15T12:05:41Z
-#+WEIGHT: 2
+#+WEIGHT: 4
 
 #+begin_quote
 Note: The instructions below are meant for packagers.
@@ -52,8 +52,9 @@ firefox-translations-models/models/
 We need all the models, vocabs and shortlists in a single directory.
 We also need a ~registry.json~ associating models, vocabs and shortlists with language pairs.
 
-Use this [[https://gist.github.com/akashters/985311118f8d9937957d4c57073e5ad4][github gist]] to flatten the folder structure and also to generate the ~registry.json~ file.
-save that bash script into ~firefox-translations-models/process-firefox-translation-models.py~
+Use the ~sripts/process-firefox-translations-models.py~ script provided with the [[https://github.com/terslang/LocalTranslate][source code]] to flatten the folder structure and also to
+generate the ~registry.json~ file.
+Copy that script into ~firefox-translations-models/process-firefox-translation-models.py~
 
 #+begin_src bash
   cd firefox-translations-models
@@ -62,6 +63,8 @@ save that bash script into ~firefox-translations-models/process-firefox-translat
 #+end_src
 
 This should have created a new directory called ~flattened-models~ with all the models, vocabs and shortlists and a file in this directory called ~registry.json~ along with a copy of the ~LICENSE~ file.
+
+The script also provides other options like ~--base-first~ and ~--silent~. Run it with ~--help~ flag to get more information.
 
 * Verify your directory and registry.json
 

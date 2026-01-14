@@ -6,9 +6,7 @@ LocalTranslate uses Firefox’s neural translation models (from [mozilla/firefox
 
 _Kindly note that LocalTranslate is not affiliated with The Mozilla Foundation in any way. LocalTranslate is just a wrapper which lets you natively use Firefox’s neural translation models._
 
-<a href='https://flathub.org/apps/dev.ters.LocalTranslate'>
-  <img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/>
-</a>
+[<img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/> ![FlatHub install count](https://img.shields.io/flathub/downloads/dev.ters.LocalTranslate)](https://flathub.org/apps/dev.ters.LocalTranslate)
 
 ## Screenshots
 ![localtranslate-landscape-dark](https://terslang.github.io/LocalTranslate/localtranslate-dark-enjp.png)

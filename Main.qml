@@ -41,8 +41,10 @@ ApplicationWindow {
     readonly property bool isLandscape: width > height
 
     function doTranslate() {
-        if (sourceText.text.trim() === "")
+        if (sourceText.text.trim() === "") {
+            resultText.text = ""
             return
+        }
         let fromLangCode = fromLangCombo.currentValue
         let toLangCode = toLangCombo.currentValue
         let langPair = fromLangCode + toLangCode
@@ -51,7 +53,22 @@ ApplicationWindow {
         resultText.text = result
     }
 
+    // Debounce timer so we don't translate on every keystroke while typing.
+    Timer {
+        id: translateDebounce
+        interval: 400
+        repeat: false
+        onTriggered: window.doTranslate()
+    }
+
+    // Translate right away (e.g. on paste) and cancel any pending debounced run.
+    function translateImmediately() {
+        translateDebounce.stop()
+        doTranslate()
+    }
+
     function clearText() {
+        translateDebounce.stop()
         sourceText.clear()
         resultText.clear()
         sourceText.forceActiveFocus()
@@ -60,7 +77,7 @@ ApplicationWindow {
     Shortcut {
         sequences: ["Ctrl+Enter", "Ctrl+Return"]
         context: Qt.ApplicationShortcut
-        onActivated: window.doTranslate()
+        onActivated: window.translateImmediately()
     }
 
     Shortcut {
@@ -153,8 +170,8 @@ ApplicationWindow {
 
                     onActivated: (index) => {
                         generalSettings.fromLangCode = model[currentIndex].code
-                        // Clear the existing result
-                        resultText.text = ""
+                        // Re-translate with the newly selected language
+                        window.translateImmediately()
                     }
                 }
 
@@ -172,6 +189,15 @@ ApplicationWindow {
                         placeholderText: qsTr("Enter text to translate...")
                         wrapMode: TextEdit.Wrap
                         verticalAlignment: TextEdit.AlignTop
+
+                        // Translate automatically after a short pause in typing.
+                        onTextChanged: translateDebounce.restart()
+
+                        // Translate immediately when text is pasted.
+                        Keys.onPressed: (event) => {
+                            if (event.matches(StandardKey.Paste))
+                                Qt.callLater(window.translateImmediately)
+                        }
                     }
                 }
 
@@ -221,7 +247,10 @@ ApplicationWindow {
                         width: 28
                         height: 28
                         font.pixelSize: 12
-                        onClicked: sourceText.paste()
+                        onClicked: {
+                            sourceText.paste()
+                            window.translateImmediately()
+                        }
                     }
 
                     Item {
@@ -236,7 +265,7 @@ ApplicationWindow {
                         highlighted: true
                         font.pixelSize: 12
                         font.bold: true
-                        onClicked: window.doTranslate()
+                        onClicked: window.translateImmediately()
 
                         ToolTip.visible: hovered
                         ToolTip.text: qsTr("Ctrl+Enter")
@@ -274,6 +303,9 @@ ApplicationWindow {
                 // Update settings too
                 generalSettings.fromLangCode = sortedLanguages[fromLangCombo.currentIndex].code
                 generalSettings.toLangCode = sortedLanguages[toLangCombo.currentIndex].code
+
+                // Re-translate after swapping
+                window.translateImmediately()
             }
         }
 
@@ -316,8 +348,8 @@ ApplicationWindow {
 
                     onActivated: (index) => {
                         generalSettings.toLangCode = model[currentIndex].code
-                        // Clear the existing result
-                        resultText.text = ""
+                        // Re-translate with the newly selected language
+                        window.translateImmediately()
                     }
                 }
 

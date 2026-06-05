@@ -182,10 +182,11 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    anchors.bottom: fromTransliterationText.visible ? fromTransliterationText.top : fromBottomRow.top
+                    anchors.bottom: fromTransliterationView.visible ? fromTransliterationView.top : fromBottomRow.top
 
                     TextArea {
                         id: sourceText
+                        width: parent.width
                         placeholderText: qsTr("Enter text to translate...")
                         wrapMode: TextEdit.Wrap
                         verticalAlignment: TextEdit.AlignTop
@@ -202,32 +203,38 @@ ApplicationWindow {
                 }
 
                 // Display transliteration if non-Latin
-                Text {
-                    id: fromTransliterationText
+                ScrollView {
+                    id: fromTransliterationView
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: fromBottomRow.top
                     anchors.bottomMargin: visible ? 4 : 0
-                    leftPadding: 8
-                    rightPadding: 8
-                    topPadding: 4
-                    horizontalAlignment: Text.AlignLeft
-                    font.pointSize: 12
-                    color: window.palette.placeholderText
-                    visible: text !== ""
-
-                    wrapMode: Text.WordWrap
-                    elide: Text.ElideRight
+                    height: visible ? Math.min(fromTransliterationText.implicitHeight,
+                                               parent.height / 3) : 0
+                    visible: fromTransliterationText.text !== ""
                     clip: true
-                    maximumLineCount: parent.height / 2 / (font.pixelSize * 1.5)
 
-                    text: {
-                        let fromCode = fromLangCombo.currentValue
-                        if (window.nonLatinLangs.includes(fromCode)) {
-                            return translationBridge.transliterate(
-                                        sourceText.text, fromCode)
+                    TextArea {
+                        id: fromTransliterationText
+                        width: parent.width
+                        readOnly: true
+                        wrapMode: TextEdit.Wrap
+                        font.pointSize: 12
+                        color: window.palette.placeholderText
+                        leftPadding: 8
+                        rightPadding: 8
+                        topPadding: 4
+                        bottomPadding: 4
+                        background: null
+
+                        text: {
+                            let fromCode = fromLangCombo.currentValue
+                            if (window.nonLatinLangs.includes(fromCode)) {
+                                return translationBridge.transliterate(
+                                            sourceText.text, fromCode)
+                            }
+                            return ""
                         }
-                        return ""
                     }
                 }
 
@@ -359,10 +366,11 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 4
-                    anchors.bottom: toTransliterationText.visible ? toTransliterationText.top : toBottomRow.top
+                    anchors.bottom: toTransliterationView.visible ? toTransliterationView.top : toBottomRow.top
 
                     TextArea {
                         id: resultText
+                        width: parent.width
                         placeholderText: qsTr("Translation will appear here")
                         wrapMode: TextEdit.Wrap
                         readOnly: true
@@ -371,32 +379,38 @@ ApplicationWindow {
                     }
                 }
 
-                Text {
-                    id: toTransliterationText
+                ScrollView {
+                    id: toTransliterationView
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: toBottomRow.top
                     anchors.bottomMargin: visible ? 4 : 0
-                    leftPadding: 8
-                    rightPadding: 8
-                    topPadding: 4
-                    horizontalAlignment: Text.AlignLeft
-                    font.pointSize: 12
-                    color: window.palette.placeholderText
-                    visible: text !== ""
-
-                    wrapMode: Text.WordWrap
-                    elide: Text.ElideRight
+                    height: visible ? Math.min(toTransliterationText.implicitHeight,
+                                               parent.height / 3) : 0
+                    visible: toTransliterationText.text !== ""
                     clip: true
-                    maximumLineCount: parent.height / 2 / (font.pixelSize * 1.5)
 
-                    text: {
-                        let toCode = toLangCombo.currentValue
-                        if (window.nonLatinLangs.includes(toCode)) {
-                            return translationBridge.transliterate(
-                                        resultText.text, toCode)
+                    TextArea {
+                        id: toTransliterationText
+                        width: parent.width
+                        readOnly: true
+                        wrapMode: TextEdit.Wrap
+                        font.pointSize: 12
+                        color: window.palette.placeholderText
+                        leftPadding: 8
+                        rightPadding: 8
+                        topPadding: 4
+                        bottomPadding: 4
+                        background: null
+
+                        text: {
+                            let toCode = toLangCombo.currentValue
+                            if (window.nonLatinLangs.includes(toCode)) {
+                                return translationBridge.transliterate(
+                                            resultText.text, toCode)
+                            }
+                            return ""
                         }
-                        return ""
                     }
                 }
 

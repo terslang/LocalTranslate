@@ -49,3 +49,6 @@ Currently, localtranslate is only offered as a flatpak. You can find it on [[htt
 
 + ~Ctrl+Enter~ / ~Ctrl+Return~ - This will translate the text
 + ~Ctrl+D~ - This will clear all the text fields and returns the focus to the input field
+
+* CLI-mode
+

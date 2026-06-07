@@ -52,3 +52,35 @@ Currently, localtranslate is only offered as a flatpak. You can find it on [[htt
 
 * CLI-mode
 
+LocalTranslate comes with CLI-mode, which can be used to do quick translations without launching the GUI.
+Simply executing Localtranslate with command line args makes the app switch to CLI-mode.
+
+Example usage:
+#+BEGIN_SRC bash
+  localtranslate --from=en --to=de "Good Morning"
+#+END_SRC
+
+ you can also pipe text into localtranslate via a pipe
+
+#+BEGIN_SRC bash
+  echo -n "Good Morning" | localtranslate --from=en --to=de
+#+END_SRC
+
+If you are using the flatpak...
+
+#+BEGIN_SRC bash
+  flatpak run dev.ters.LocalTranslate --from=en --to=de "Good Morning"
+#+END_SRC
+
+You can also get the list of supported languages by using ~--list-languages~ option
+
+Below are the options available
+#+BEGIN_SRC bash
+Options:
+  -h, --help        Displays help on commandline options.
+  --help-all        Displays help, including generic Qt options.
+  -v, --version     Displays version information.
+  --from <from>     Source language code.
+  --to <to>         Target language code.
+  --list-languages  List available languages.
+#+END_SRC

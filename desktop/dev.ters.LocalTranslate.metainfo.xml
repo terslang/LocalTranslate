@@ -116,6 +116,15 @@
   </screenshots>
   
   <releases>
+    <release version="0.6.0" date="2026-06-07">
+      <description>
+        <ul>
+          <li>Introduce CLI-mode to translate without launching the GUI</li>
+          <li>Translates text automatically on pasting and debounced translation when typing</li>
+          <li>Transliteration text is not truncated but the section is scrollable instead</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.5.0" date="2025-09-11">
       <description>
         <ul>

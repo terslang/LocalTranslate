@@ -1,0 +1,91 @@
+.TH LocalTranslate "1" "2026-06-06" "LocalTranslate 0.5.0"
+
+.SH NAME
+.B LocalTranslate
+- Translate offline using Firefox Translation Models
+
+.SH SYNOPSIS
+.B localtranslate
+.RI [ \-h | \-\-help ]
+.RI [ \-\-help\-all ]
+.RI [ \-v | \-\-version ]
+.RI [ \-\-list\-languages ]
+.br
+.RS
+.RI [ \-\-from=<from> ] " " [ \-\-to=<to> ] " "
+.RI <text>
+
+.SH DESCRIPTION
+.B LocalTranslate
+: Translate offline using Firefox Translation Models.
+.br
+LocalTranslate uses Firefox’s neural translation models (from mozilla/firefox-translations-models[1]) to perform high-quality translations locally on your device.
+.br
+.br
+.PP
+Read from stdin via a pipe when no text is given in args:
+.RS
+.nf
+echo "Good Morning" | localtranslate --from=en --to=de
+.fi
+.RE
+
+.I Kindly note that LocalTranslate is not affiliated with The Mozilla Foundation in any way.
+.br
+.I LocalTranslate is just a wrapper which lets you natively use Firefox’s neural translation models.
+
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Displays help on commandline options
+
+.TP
+.B \-\-help-all
+Displays help, including generic Qt options
+
+.TP
+.B \-v, \-\-version
+Displays version information
+
+.TP
+.B \-\-list-languages
+List available languages
+
+.TP
+.B \-\-from=<from>
+Source language code (ISO code, e.g., ja, te, ml)
+
+.TP
+.B \-\-to=<to>
+Target langugae code (ISO code, e.g., en, de, fr)
+
+.SH AUTHORS
+LocalTranslate is primarily written/maintained by Shriram Ravindranathan and Akash Doppalapudi. Contributions have come from various people on the GitHub repository[2], you can see contributors there.
+
+.SH REPORTING BUGS
+Report bugs at our GitHub repositories issues page[3], you can also see existing issues over there.
+
+.SH SEE ALSO
+LocalTranslate's documentation[4], Glotter (Self-hostable translation server)[5]
+
+.SH NOTES
+.IP "1. " 4
+mozilla/firefox-translations-models
+.br
+https://github.com/mozilla/firefox-translations-models
+.IP "2. " 4
+LocalTranslate Github Repository
+.br
+https://github.com/terslang/LocalTranslate
+.IP "3. " 4
+LocalTranslate Issues
+.br
+https://github.com/terslang/LocalTranslate/issues
+.IP "4. " 4
+LocalTranslate's Documentation
+.br
+https://terslang.github.io/LocalTranslate/
+.IP "5. " 4
+Glotter
+.br
+https://github.com/terslang/glotter

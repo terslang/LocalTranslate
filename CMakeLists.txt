@@ -131,3 +131,30 @@ if(UNIX AND NOT APPLE)
     FILES completions/localtranslate.fish
     DESTINATION ${CMAKE_INSTALL_DATADIR}/fish/vendor_completions.d)
 endif()
+
+# Manpage config
+set(MANPAGE_SRC ${CMAKE_SOURCE_DIR}/localtranslate.1)
+set(MANPAGE_GZ ${CMAKE_BINARY_DIR}/man/localtranslate.1.gz)
+set(MANPAGE_DIR ${CMAKE_INSTALL_FULL_MANDIR}/man1)
+
+# Compress manpage
+add_custom_command(
+  OUTPUT "${MANPAGE_GZ}"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/man"
+  COMMAND gzip -c -n "${MANPAGE_SRC}" > "${MANPAGE_GZ}"
+  DEPENDS "${MANPAGE_SRC}"
+  COMMENT "Generating compressed manpage: ${MANPAGE_GZ}"
+  VERBATIM
+)
+
+add_custom_target(manpages ALL DEPENDS "${MANPAGE_GZ}")
+
+# Install the manpage for Linux (Unix but not Apple)
+if(UNIX AND NOT APPLE)
+  install(
+    FILES "${MANPAGE_GZ}"
+    DESTINATION "${MANPAGE_DIR}"
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
+endif()
+

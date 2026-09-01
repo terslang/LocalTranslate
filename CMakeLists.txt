@@ -36,6 +36,14 @@ qt_add_qml_module(localtranslate
 
 target_include_directories(localtranslate PRIVATE ${LocalTranslate_BINARY_DIR}/config)
 
+# QML tests, off by default so the normal build needs no extra Qt components.
+# Enable with -DBUILD_TESTING=ON, then run with ctest.
+option(BUILD_TESTING "Build the QML tests" OFF)
+if(BUILD_TESTING)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
+
 set_target_properties(localtranslate PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

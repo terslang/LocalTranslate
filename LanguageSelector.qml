@@ -97,25 +97,50 @@ ComboBox {
     onOtherHoldsSelectionChanged: if (!otherHoldsSelection) otherExpansion = "auto"
 
     // Rows are tagged so one delegate can render both languages and the
-    // "All other" disclosure row.
+    // "All other" disclosure row. Everything a row needs to draw itself is
+    // baked in here, so the delegate only ever reads its own modelData - it
+    // cannot reach back into this component, which is not in scope for a
+    // delegate loaded from compiled resources.
+    // Handed to every row so the delegate has a way to call back. The
+    // delegate cannot see this component's id - it is out of scope when the
+    // component is loaded from compiled resources - but it can reach this
+    // through the row it was given.
+    readonly property var rowActions: ({
+        togglePin: code => selector.pinToggled(code)
+    })
+
     readonly property var rows: {
-        if (!grouped)
-            return allLanguages.map(lang => ({ kind: "lang", lang: lang, divider: false }))
-
-        let out = pinnedLanguages.map(lang => ({ kind: "lang", lang: lang, divider: false }))
-
-        recentLanguages.forEach((lang, i) => out.push({
+        const languageRow = (lang, divider) => ({
             kind: "lang",
             lang: lang,
-            divider: i === 0 && out.length > 0
-        }))
+            name: lang.name,
+            code: lang.code,
+            pinned: isPinned(lang.code),
+            divider: divider,
+            actions: rowActions
+        })
 
-        out.push({ kind: "toggle", lang: null, divider: out.length > 0 })
+        if (!grouped)
+            return allLanguages.map(lang => languageRow(lang, false))
+
+        let out = pinnedLanguages.map(lang => languageRow(lang, false))
+
+        recentLanguages.forEach((lang, i) => out.push(
+                                    languageRow(lang, i === 0 && out.length > 0)))
+
+        out.push({
+            kind: "toggle",
+            lang: null,
+            name: (showOther ? "▾ " : "▸ ")
+                  + qsTr("All other (%1)").arg(otherLanguages.length),
+            code: "",
+            pinned: false,
+            divider: out.length > 0,
+            actions: rowActions
+        })
 
         if (showOther)
-            otherLanguages.forEach(lang => out.push({
-                kind: "lang", lang: lang, divider: false
-            }))
+            otherLanguages.forEach(lang => out.push(languageRow(lang, false)))
 
         return out
     }
@@ -144,12 +169,13 @@ ComboBox {
     readonly property int selectedRow: rows.findIndex(row => row.kind === "lang"
                                                       && row.lang.code === selectedCode)
     onSelectedRowChanged: if (selectedRow >= 0) currentIndex = selectedRow
-    Component.onCompleted: if (selectedRow >= 0) currentIndex = selectedRow
 
     // Emitted when the user picks an actual language, as opposed to clicking
     // the "All other" disclosure row. Callers should use this instead of
     // `activated`, which also fires for the disclosure row.
     signal languageSelected(string code)
+
+    Component.onCompleted: if (selectedRow >= 0) currentIndex = selectedRow
 
     // The disclosure row is not a language: activating it expands the group
     // and restores the previous selection rather than selecting the row.
@@ -180,22 +206,17 @@ ComboBox {
         required property int index
         required property var modelData
 
-        // The enclosing selector, pulled in explicitly so the delegate can
-        // reach its pin state.
-        readonly property LanguageSelector owner: selector
-
+        // The delegate reads only its own row data plus the view it lives in.
+        // The enclosing component's id is not in scope for a delegate loaded
+        // from compiled resources, so reaching outward would leave it null.
+        readonly property var view: ListView.view
         readonly property bool isToggle: modelData.kind === "toggle"
-        readonly property var lang: modelData.lang
-        readonly property bool pinned: !isToggle && owner.isPinned(lang.code)
 
-        width: owner.width
-        highlighted: owner.highlightedIndex === index
+        width: view ? view.width : implicitWidth
+        highlighted: ListView.isCurrentItem
 
         // Divider above the first row of each group.
         topPadding: modelData.divider ? 5 : 4
-
-        // The disclosure row expands the list rather than selecting anything.
-        onClicked: if (isToggle) owner.toggleOther()
 
         Rectangle {
             visible: langDelegate.modelData.divider
@@ -203,7 +224,7 @@ ComboBox {
             anchors.left: parent.left
             anchors.right: parent.right
             height: 1
-            color: langDelegate.owner.palette.mid
+            color: langDelegate.palette.mid
         }
 
         contentItem: Item {
@@ -215,13 +236,10 @@ ComboBox {
                 anchors.right: pinButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
-                text: langDelegate.isToggle
-                      ? (langDelegate.owner.showOther ? "▾ " : "▸ ")
-                        + qsTr("All other (%1)").arg(langDelegate.owner.otherLanguages.length)
-                      : langDelegate.lang.name
+                text: langDelegate.modelData.name
                 color: langDelegate.palette.text
                 opacity: langDelegate.isToggle ? 0.7 : 1.0
-                font: langDelegate.owner.font
+                font: langDelegate.font
                 elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
             }
@@ -238,20 +256,22 @@ ComboBox {
 
                 // Unpinned languages only reveal the star on hover, to keep the
                 // list from looking like a wall of icons.
-                opacity: langDelegate.pinned ? 1.0
-                                             : (hovered || langDelegate.hovered ? 0.55 : 0.0)
+                opacity: langDelegate.modelData.pinned
+                         ? 1.0
+                         : (hovered || langDelegate.hovered ? 0.55 : 0.0)
 
-                onClicked: langDelegate.owner.pinToggled(langDelegate.lang.code)
+                onClicked: langDelegate.modelData.actions.togglePin(
+                               langDelegate.modelData.code)
 
                 ToolTip.visible: hovered
-                ToolTip.text: langDelegate.pinned ? qsTr("Unpin language")
-                                                  : qsTr("Pin language")
+                ToolTip.text: langDelegate.modelData.pinned ? qsTr("Unpin language")
+                                                            : qsTr("Pin language")
                 ToolTip.delay: 300
 
                 contentItem: Text {
-                    text: langDelegate.pinned ? "★" : "☆"
+                    text: langDelegate.modelData.pinned ? "\u2605" : "\u2606"
                     color: langDelegate.palette.text
-                    font.pixelSize: langDelegate.owner.font.pixelSize + 2
+                    font.pixelSize: langDelegate.font.pixelSize + 2
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }

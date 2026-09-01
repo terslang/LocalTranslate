@@ -10,6 +10,10 @@ TestCase {
     id: testCase
     name: "LanguageSelector"
 
+    // Some tests open the popup and inspect real delegates, which needs a
+    // shown window.
+    when: windowShown
+
     readonly property var languages: [
         { code: "ar", name: "Arabic" },
         { code: "de", name: "German" },
@@ -155,6 +159,33 @@ TestCase {
         compare(selector.otherExpansion, "auto",
                 "the next popup starts collapsed again")
         verify(!selector.showOther)
+    }
+
+    // The delegate cannot reach the enclosing component when the QML is
+    // loaded from compiled resources, so everything it draws has to come from
+    // the row it is handed. These tests open the popup and inspect the real
+    // delegate instances, which plain property checks would not catch.
+    // Opens the popup and drives a real delegate. The delegate cannot reach
+    // the enclosing component when the QML is loaded from compiled resources,
+    // so this covers the wiring that plain property checks miss.
+    function test_star_reports_the_language_to_pin() {
+        const selector = createSelector(["hu"], ["fr"], "en")
+        let pinned = ""
+        selector.pinToggled.connect(code => pinned = code)
+
+        selector.popup.open()
+        tryVerify(() => selector.popup.contentItem.count === selector.rows.length)
+
+        const row = selector.popup.contentItem.itemAtIndex(0)
+        verify(row, "the delegate was instantiated")
+        verify(row.width > 0, "the delegate knows how wide to be")
+        compare(row.modelData.name, selector.rows[0].name,
+                "the row draws from its own data")
+
+        row.contentItem.children[1].clicked()
+        compare(pinned, selector.rows[0].code,
+                "the star reports the language on its own row")
+        selector.popup.close()
     }
 
     function test_selection_survives_the_list_being_regrouped() {

@@ -106,7 +106,8 @@ ComboBox {
     // component is loaded from compiled resources - but it can reach this
     // through the row it was given.
     readonly property var rowActions: ({
-        togglePin: code => selector.pinToggled(code)
+        togglePin: code => selector.pinToggled(code),
+        toggleOther: () => selector.toggleOther()
     })
 
     readonly property var rows: {
@@ -211,6 +212,11 @@ ComboBox {
         // from compiled resources, so reaching outward would leave it null.
         readonly property var view: ListView.view
         readonly property bool isToggle: modelData.kind === "toggle"
+
+        // The disclosure row is a control, not a choice. ItemDelegate's own
+        // click would reach the ComboBox and close the popup, so the row
+        // swallows the click and expands the group in place instead.
+        onClicked: if (isToggle) modelData.actions.toggleOther()
 
         width: view ? view.width : implicitWidth
         highlighted: ListView.isCurrentItem

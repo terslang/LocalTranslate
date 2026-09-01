@@ -188,6 +188,28 @@ TestCase {
         selector.popup.close()
     }
 
+    // The disclosure row is a control, not a choice: clicking it has to expand
+    // the group in place rather than pick a language and dismiss the popup.
+    function test_disclosure_row_expands_without_closing_the_popup() {
+        const selector = createSelector(["hu"], [], "hu")
+        verify(!selector.showOther, "the rest of the list starts collapsed")
+
+        selector.popup.open()
+        tryVerify(() => selector.popup.opened)
+        tryVerify(() => selector.popup.contentItem.count === selector.rows.length)
+
+        const toggleIndex = selector.rows.findIndex(row => row.kind === "toggle")
+        const row = selector.popup.contentItem.itemAtIndex(toggleIndex)
+        verify(row, "the disclosure row was instantiated")
+
+        row.clicked()
+        verify(selector.showOther, "clicking the row expands the group")
+        verify(selector.popup.opened, "the popup stays open")
+        compare(selector.selectedCode, "hu", "the selection is untouched")
+
+        selector.popup.close()
+    }
+
     function test_selection_survives_the_list_being_regrouped() {
         const selector = createSelector([], [], "fr")
         compare(selector.selectedCode, "fr")

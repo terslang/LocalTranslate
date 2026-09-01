@@ -21,6 +21,28 @@ ApplicationWindow {
 
         property string fromLangCode
         property string toLangCode
+
+        // Pinned languages, stored as comma-separated language codes. Kept
+        // separately for each side: translating *from* many unfamiliar
+        // languages *into* a couple of familiar ones is a common pattern, and
+        // a shared list would clutter both dropdowns.
+        property string pinnedFromLangs
+        property string pinnedToLangs
+    }
+
+    // Settings can only hold primitives, so pinned languages round-trip
+    // through a comma-separated string.
+    function decodeCodes(encoded) {
+        return encoded ? encoded.split(",").filter(code => code !== "") : []
+    }
+
+    function encodeCodes(codes) {
+        return codes.join(",")
+    }
+
+    // Returns codes with `code` added if absent, or removed if present.
+    function toggleCode(codes, code) {
+        return codes.includes(code) ? codes.filter(c => c !== code) : codes.concat([code])
     }
 
     Component.onCompleted: {
@@ -146,7 +168,7 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
-                ComboBox {
+                LanguageSelector {
                     id: fromLangCombo
                     width: 200
                     font.pixelSize: 12
@@ -155,21 +177,24 @@ ApplicationWindow {
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
 
-                    model: window.sortedLanguages
-                    textRole: "name"
-                    valueRole: "code"
+                    allLanguages: window.sortedLanguages
+                    pinnedCodes: window.decodeCodes(generalSettings.pinnedFromLangs)
+
+                    onPinToggled: (code) => {
+                        generalSettings.pinnedFromLangs = window.encodeCodes(
+                                    window.toggleCode(pinnedCodes, code))
+                    }
 
                     Component.onCompleted: {
                         const langCode = generalSettings.fromLangCode || "en"
-                        currentIndex = window.sortedLanguages.findIndex(
-                                    lang => lang.code === langCode)
+                        selectByCode(langCode)
 
                         // set the lang in settings too
                         generalSettings.fromLangCode = langCode
                     }
 
                     onActivated: (index) => {
-                        generalSettings.fromLangCode = model[currentIndex].code
+                        generalSettings.fromLangCode = currentValue
                         // Re-translate with the newly selected language
                         window.translateImmediately()
                     }
@@ -302,14 +327,16 @@ ApplicationWindow {
                     resultText.text = ""
                 }
 
-                // Swap languages
-                var oldIndex = fromLangCombo.currentIndex
-                fromLangCombo.currentIndex = toLangCombo.currentIndex
-                toLangCombo.currentIndex = oldIndex
+                // Swap languages. The two selectors order their models
+                // independently (each has its own pins), so swap by language
+                // code rather than by index.
+                const oldFromCode = fromLangCombo.currentValue
+                fromLangCombo.selectByCode(toLangCombo.currentValue)
+                toLangCombo.selectByCode(oldFromCode)
 
                 // Update settings too
-                generalSettings.fromLangCode = sortedLanguages[fromLangCombo.currentIndex].code
-                generalSettings.toLangCode = sortedLanguages[toLangCombo.currentIndex].code
+                generalSettings.fromLangCode = fromLangCombo.currentValue
+                generalSettings.toLangCode = toLangCombo.currentValue
 
                 // Re-translate after swapping
                 window.translateImmediately()
@@ -331,7 +358,7 @@ ApplicationWindow {
             contentItem: Item {
                 anchors.fill: parent
 
-                ComboBox {
+                LanguageSelector {
                     id: toLangCombo
                     width: 200
                     font.pixelSize: 12
@@ -340,21 +367,24 @@ ApplicationWindow {
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
 
-                    model: window.sortedLanguages
-                    textRole: "name"
-                    valueRole: "code"
+                    allLanguages: window.sortedLanguages
+                    pinnedCodes: window.decodeCodes(generalSettings.pinnedToLangs)
+
+                    onPinToggled: (code) => {
+                        generalSettings.pinnedToLangs = window.encodeCodes(
+                                    window.toggleCode(pinnedCodes, code))
+                    }
 
                     Component.onCompleted: {
                         const langCode = generalSettings.toLangCode || "de"
-                        currentIndex = window.sortedLanguages.findIndex(
-                                    lang => lang.code === langCode)
+                        selectByCode(langCode)
 
                         // set the lang in settings too
                         generalSettings.toLangCode = langCode
                     }
 
                     onActivated: (index) => {
-                        generalSettings.toLangCode = model[currentIndex].code
+                        generalSettings.toLangCode = currentValue
                         // Re-translate with the newly selected language
                         window.translateImmediately()
                     }

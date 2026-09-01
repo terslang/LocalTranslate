@@ -28,7 +28,7 @@ qt_add_executable(localtranslate
 qt_add_qml_module(localtranslate
     URI LocalTranslate
     VERSION 1.0
-    QML_FILES Main.qml
+    QML_FILES Main.qml LanguageSelector.qml
     RESOURCES config.hpp.in
     SOURCES translation_bridge.hpp
     SOURCES translation_bridge.cpp

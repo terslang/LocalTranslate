@@ -21,6 +21,40 @@ ApplicationWindow {
 
         property string fromLangCode
         property string toLangCode
+
+        // Pinned languages, stored as comma-separated language codes. Kept
+        // separately for each side: translating *from* many unfamiliar
+        // languages *into* a couple of familiar ones is a common pattern, and
+        // a shared list would clutter both dropdowns.
+        property string pinnedFromLangs
+        property string pinnedToLangs
+
+        // Recently-used languages, most recent first, same encoding.
+        property string recentFromLangs
+        property string recentToLangs
+    }
+
+    // Settings can only hold primitives, so pinned languages round-trip
+    // through a comma-separated string.
+    function decodeCodes(encoded) {
+        return encoded ? encoded.split(",").filter(code => code !== "") : []
+    }
+
+    function encodeCodes(codes) {
+        return codes.join(",")
+    }
+
+    // Returns codes with `code` added if absent, or removed if present.
+    function toggleCode(codes, code) {
+        return codes.includes(code) ? codes.filter(c => c !== code) : codes.concat([code])
+    }
+
+    // Moves `code` to the front of the recently-used list, keeping the list
+    // short. The selector filters out pinned and currently-selected entries
+    // when it renders, so everything used is worth remembering here.
+    readonly property int recentHistory: 6
+    function promoteCode(codes, code) {
+        return [code].concat(codes.filter(c => c !== code)).slice(0, recentHistory)
     }
 
     Component.onCompleted: {
@@ -45,8 +79,8 @@ ApplicationWindow {
             resultText.text = ""
             return
         }
-        let fromLangCode = fromLangCombo.currentValue
-        let toLangCode = toLangCombo.currentValue
+        let fromLangCode = fromLangCombo.selectedCode
+        let toLangCode = toLangCombo.selectedCode
         let langPair = fromLangCode + toLangCode
 
         let result = translationBridge.translate(sourceText.text, langPair)
@@ -128,8 +162,8 @@ ApplicationWindow {
         columnSpacing: 4
         anchors.margins: 8
 
-        columns: isLandscape ? 3 : 1
-        rows: isLandscape ? 1 : 3
+        columns: window.isLandscape ? 3 : 1
+        rows: window.isLandscape ? 1 : 3
 
         // === SOURCE FRAME ===
         Frame {
@@ -140,13 +174,13 @@ ApplicationWindow {
 
             // If landscape => row=0, col=0
             // If portrait  => row=0, col=0
-            Layout.row: isLandscape ? 0 : 0
-            Layout.column: isLandscape ? 0 : 0
+            Layout.row: window.isLandscape ? 0 : 0
+            Layout.column: window.isLandscape ? 0 : 0
 
             contentItem: Item {
                 anchors.fill: parent
 
-                ComboBox {
+                LanguageSelector {
                     id: fromLangCombo
                     width: 200
                     font.pixelSize: 12
@@ -155,21 +189,27 @@ ApplicationWindow {
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
 
-                    model: window.sortedLanguages
-                    textRole: "name"
-                    valueRole: "code"
+                    allLanguages: window.sortedLanguages
+                    pinnedCodes: window.decodeCodes(generalSettings.pinnedFromLangs)
+                    recentCodes: window.decodeCodes(generalSettings.recentFromLangs)
+
+                    onPinToggled: (code) => {
+                        generalSettings.pinnedFromLangs = window.encodeCodes(
+                                    window.toggleCode(pinnedCodes, code))
+                    }
 
                     Component.onCompleted: {
                         const langCode = generalSettings.fromLangCode || "en"
-                        currentIndex = window.sortedLanguages.findIndex(
-                                    lang => lang.code === langCode)
+                        selectByCode(langCode)
 
                         // set the lang in settings too
                         generalSettings.fromLangCode = langCode
                     }
 
-                    onActivated: (index) => {
-                        generalSettings.fromLangCode = model[currentIndex].code
+                    onLanguageSelected: (code) => {
+                        generalSettings.fromLangCode = code
+                        generalSettings.recentFromLangs = window.encodeCodes(
+                                    window.promoteCode(recentCodes, code))
                         // Re-translate with the newly selected language
                         window.translateImmediately()
                     }
@@ -228,7 +268,7 @@ ApplicationWindow {
                         background: null
 
                         text: {
-                            let fromCode = fromLangCombo.currentValue
+                            let fromCode = fromLangCombo.selectedCode
                             if (window.nonLatinLangs.includes(fromCode)) {
                                 return translationBridge.transliterate(
                                             sourceText.text, fromCode)
@@ -251,8 +291,8 @@ ApplicationWindow {
                     Button {
                         id: pasteButton
                         icon.source: "qrc:/images/paste.png"
-                        width: 28
-                        height: 28
+                        Layout.preferredWidth: 28
+                        Layout.preferredHeight: 28
                         font.pixelSize: 12
                         onClicked: {
                             sourceText.paste()
@@ -267,8 +307,8 @@ ApplicationWindow {
                     Button {
                         id: translateButton
                         text: qsTr("Translate")
-                        width: 80
-                        height: 28
+                        Layout.preferredWidth: 80
+                        Layout.preferredHeight: 28
                         highlighted: true
                         font.pixelSize: 12
                         font.bold: true
@@ -286,11 +326,11 @@ ApplicationWindow {
         Button {
             id: swapButton
 
-            icon.source: isLandscape ? "qrc:/images/arrow-left-right.png" : "qrc:/images/arrow-down-up.png"
+            icon.source: window.isLandscape ? "qrc:/images/arrow-left-right.png" : "qrc:/images/arrow-down-up.png"
             // If landscape => row=0, col=1
             // If portrait  => row=1, col=0
-            Layout.row: isLandscape ? 0 : 1
-            Layout.column: isLandscape ? 1 : 0
+            Layout.row: window.isLandscape ? 0 : 1
+            Layout.column: window.isLandscape ? 1 : 0
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             Layout.preferredWidth: window.isLandscape ? 40 : implicitWidth
             Layout.preferredHeight: window.isLandscape ? 40 : implicitHeight
@@ -302,14 +342,22 @@ ApplicationWindow {
                     resultText.text = ""
                 }
 
-                // Swap languages
-                var oldIndex = fromLangCombo.currentIndex
-                fromLangCombo.currentIndex = toLangCombo.currentIndex
-                toLangCombo.currentIndex = oldIndex
+                // Swap languages. The two selectors order their models
+                // independently (each has its own pins and recents), so swap
+                // by language code rather than by index.
+                const oldFromCode = fromLangCombo.selectedCode
+                const oldToCode = toLangCombo.selectedCode
+                fromLangCombo.selectByCode(oldToCode)
+                toLangCombo.selectByCode(oldFromCode)
 
-                // Update settings too
-                generalSettings.fromLangCode = sortedLanguages[fromLangCombo.currentIndex].code
-                generalSettings.toLangCode = sortedLanguages[toLangCombo.currentIndex].code
+                // Update settings too, and count the swap as a use of both
+                // languages so they surface as recents.
+                generalSettings.fromLangCode = oldToCode
+                generalSettings.toLangCode = oldFromCode
+                generalSettings.recentFromLangs = window.encodeCodes(
+                            window.promoteCode(fromLangCombo.recentCodes, oldToCode))
+                generalSettings.recentToLangs = window.encodeCodes(
+                            window.promoteCode(toLangCombo.recentCodes, oldFromCode))
 
                 // Re-translate after swapping
                 window.translateImmediately()
@@ -325,13 +373,13 @@ ApplicationWindow {
 
             // If landscape => row=0, col=2
             // If portrait  => row=2, col=0
-            Layout.row: isLandscape ? 0 : 2
-            Layout.column: isLandscape ? 2 : 0
+            Layout.row: window.isLandscape ? 0 : 2
+            Layout.column: window.isLandscape ? 2 : 0
 
             contentItem: Item {
                 anchors.fill: parent
 
-                ComboBox {
+                LanguageSelector {
                     id: toLangCombo
                     width: 200
                     font.pixelSize: 12
@@ -340,21 +388,27 @@ ApplicationWindow {
                     anchors.topMargin: 8
                     anchors.leftMargin: 8
 
-                    model: window.sortedLanguages
-                    textRole: "name"
-                    valueRole: "code"
+                    allLanguages: window.sortedLanguages
+                    pinnedCodes: window.decodeCodes(generalSettings.pinnedToLangs)
+                    recentCodes: window.decodeCodes(generalSettings.recentToLangs)
+
+                    onPinToggled: (code) => {
+                        generalSettings.pinnedToLangs = window.encodeCodes(
+                                    window.toggleCode(pinnedCodes, code))
+                    }
 
                     Component.onCompleted: {
                         const langCode = generalSettings.toLangCode || "de"
-                        currentIndex = window.sortedLanguages.findIndex(
-                                    lang => lang.code === langCode)
+                        selectByCode(langCode)
 
                         // set the lang in settings too
                         generalSettings.toLangCode = langCode
                     }
 
-                    onActivated: (index) => {
-                        generalSettings.toLangCode = model[currentIndex].code
+                    onLanguageSelected: (code) => {
+                        generalSettings.toLangCode = code
+                        generalSettings.recentToLangs = window.encodeCodes(
+                                    window.promoteCode(recentCodes, code))
                         // Re-translate with the newly selected language
                         window.translateImmediately()
                     }
@@ -404,7 +458,7 @@ ApplicationWindow {
                         background: null
 
                         text: {
-                            let toCode = toLangCombo.currentValue
+                            let toCode = toLangCombo.selectedCode
                             if (window.nonLatinLangs.includes(toCode)) {
                                 return translationBridge.transliterate(
                                             resultText.text, toCode)

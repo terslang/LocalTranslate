@@ -28,6 +28,10 @@ ApplicationWindow {
         // a shared list would clutter both dropdowns.
         property string pinnedFromLangs
         property string pinnedToLangs
+
+        // Recently-used languages, most recent first, same encoding.
+        property string recentFromLangs
+        property string recentToLangs
     }
 
     // Settings can only hold primitives, so pinned languages round-trip
@@ -43,6 +47,14 @@ ApplicationWindow {
     // Returns codes with `code` added if absent, or removed if present.
     function toggleCode(codes, code) {
         return codes.includes(code) ? codes.filter(c => c !== code) : codes.concat([code])
+    }
+
+    // Moves `code` to the front of the recently-used list, keeping the list
+    // short. The selector filters out pinned and currently-selected entries
+    // when it renders, so everything used is worth remembering here.
+    readonly property int recentHistory: 6
+    function promoteCode(codes, code) {
+        return [code].concat(codes.filter(c => c !== code)).slice(0, recentHistory)
     }
 
     Component.onCompleted: {
@@ -67,8 +79,8 @@ ApplicationWindow {
             resultText.text = ""
             return
         }
-        let fromLangCode = fromLangCombo.currentValue
-        let toLangCode = toLangCombo.currentValue
+        let fromLangCode = fromLangCombo.selectedCode
+        let toLangCode = toLangCombo.selectedCode
         let langPair = fromLangCode + toLangCode
 
         let result = translationBridge.translate(sourceText.text, langPair)
@@ -179,6 +191,7 @@ ApplicationWindow {
 
                     allLanguages: window.sortedLanguages
                     pinnedCodes: window.decodeCodes(generalSettings.pinnedFromLangs)
+                    recentCodes: window.decodeCodes(generalSettings.recentFromLangs)
 
                     onPinToggled: (code) => {
                         generalSettings.pinnedFromLangs = window.encodeCodes(
@@ -193,8 +206,10 @@ ApplicationWindow {
                         generalSettings.fromLangCode = langCode
                     }
 
-                    onActivated: (index) => {
-                        generalSettings.fromLangCode = currentValue
+                    onLanguageSelected: (code) => {
+                        generalSettings.fromLangCode = code
+                        generalSettings.recentFromLangs = window.encodeCodes(
+                                    window.promoteCode(recentCodes, code))
                         // Re-translate with the newly selected language
                         window.translateImmediately()
                     }
@@ -253,7 +268,7 @@ ApplicationWindow {
                         background: null
 
                         text: {
-                            let fromCode = fromLangCombo.currentValue
+                            let fromCode = fromLangCombo.selectedCode
                             if (window.nonLatinLangs.includes(fromCode)) {
                                 return translationBridge.transliterate(
                                             sourceText.text, fromCode)
@@ -328,15 +343,21 @@ ApplicationWindow {
                 }
 
                 // Swap languages. The two selectors order their models
-                // independently (each has its own pins), so swap by language
-                // code rather than by index.
-                const oldFromCode = fromLangCombo.currentValue
-                fromLangCombo.selectByCode(toLangCombo.currentValue)
+                // independently (each has its own pins and recents), so swap
+                // by language code rather than by index.
+                const oldFromCode = fromLangCombo.selectedCode
+                const oldToCode = toLangCombo.selectedCode
+                fromLangCombo.selectByCode(oldToCode)
                 toLangCombo.selectByCode(oldFromCode)
 
-                // Update settings too
-                generalSettings.fromLangCode = fromLangCombo.currentValue
-                generalSettings.toLangCode = toLangCombo.currentValue
+                // Update settings too, and count the swap as a use of both
+                // languages so they surface as recents.
+                generalSettings.fromLangCode = oldToCode
+                generalSettings.toLangCode = oldFromCode
+                generalSettings.recentFromLangs = window.encodeCodes(
+                            window.promoteCode(fromLangCombo.recentCodes, oldToCode))
+                generalSettings.recentToLangs = window.encodeCodes(
+                            window.promoteCode(toLangCombo.recentCodes, oldFromCode))
 
                 // Re-translate after swapping
                 window.translateImmediately()
@@ -369,6 +390,7 @@ ApplicationWindow {
 
                     allLanguages: window.sortedLanguages
                     pinnedCodes: window.decodeCodes(generalSettings.pinnedToLangs)
+                    recentCodes: window.decodeCodes(generalSettings.recentToLangs)
 
                     onPinToggled: (code) => {
                         generalSettings.pinnedToLangs = window.encodeCodes(
@@ -383,8 +405,10 @@ ApplicationWindow {
                         generalSettings.toLangCode = langCode
                     }
 
-                    onActivated: (index) => {
-                        generalSettings.toLangCode = currentValue
+                    onLanguageSelected: (code) => {
+                        generalSettings.toLangCode = code
+                        generalSettings.recentToLangs = window.encodeCodes(
+                                    window.promoteCode(recentCodes, code))
                         // Re-translate with the newly selected language
                         window.translateImmediately()
                     }
@@ -434,7 +458,7 @@ ApplicationWindow {
                         background: null
 
                         text: {
-                            let toCode = toLangCombo.currentValue
+                            let toCode = toLangCombo.selectedCode
                             if (window.nonLatinLangs.includes(toCode)) {
                                 return translationBridge.transliterate(
                                             resultText.text, toCode)

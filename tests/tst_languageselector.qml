@@ -188,6 +188,21 @@ TestCase {
         selector.popup.close()
     }
 
+    // Every row carries the group it belongs to, which is what lets the
+    // delegate fade the recent rows without reaching outside itself.
+    function test_rows_carry_their_group() {
+        const selector = createSelector(["hu"], ["fr", "de"], "en")
+        selector.otherExpansion = "expanded"
+
+        const groupOf = code => selector.rows.find(
+                                    row => row.code === code).group
+        compare(groupOf("hu"), "pinned", "pins are tagged as pinned")
+        compare(groupOf("fr"), "recent", "recents are tagged as recent")
+        compare(groupOf("de"), "recent")
+        compare(groupOf("ja"), "other", "the rest are tagged as other")
+        compare(selector.rows.find(row => row.kind === "toggle").group, "toggle")
+    }
+
     // The disclosure row is a control, not a choice: clicking it has to expand
     // the group in place rather than pick a language and dismiss the popup.
     function test_disclosure_row_expands_without_closing_the_popup() {

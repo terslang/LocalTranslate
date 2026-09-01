@@ -112,23 +112,25 @@ ComboBox {
     })
 
     readonly property var rows: {
-        const languageRow = (lang, divider) => ({
+        const languageRow = (lang, group, divider) => ({
             kind: "lang",
             lang: lang,
             name: lang.name,
             code: lang.code,
+            group: group,
             pinned: isPinned(lang.code),
             divider: divider,
             actions: rowActions
         })
 
         if (!grouped)
-            return allLanguages.map(lang => languageRow(lang, false))
+            return allLanguages.map(lang => languageRow(lang, "other", false))
 
-        let out = pinnedLanguages.map(lang => languageRow(lang, false))
+        let out = pinnedLanguages.map(lang => languageRow(lang, "pinned", false))
 
         recentLanguages.forEach((lang, i) => out.push(
-                                    languageRow(lang, i === 0 && out.length > 0)))
+                                    languageRow(lang, "recent",
+                                                i === 0 && out.length > 0)))
 
         out.push({
             kind: "toggle",
@@ -136,13 +138,15 @@ ComboBox {
             name: (showOther ? "▾ " : "▸ ")
                   + qsTr("All other (%1)").arg(otherLanguages.length),
             code: "",
+            group: "toggle",
             pinned: false,
             divider: out.length > 0,
             actions: rowActions
         })
 
         if (showOther)
-            otherLanguages.forEach(lang => out.push(languageRow(lang, false)))
+            otherLanguages.forEach(lang => out.push(
+                                       languageRow(lang, "other", false)))
 
         return out
     }
@@ -263,7 +267,11 @@ ComboBox {
                 anchors.verticalCenter: parent.verticalCenter
                 text: langDelegate.modelData.name
                 color: langDelegate.palette.text
-                opacity: langDelegate.isToggle ? 0.7 : 1.0
+                // The recent group is a convenience, not a list the user
+                // curated, so it sits visually below the pinned rows.
+                opacity: langDelegate.isToggle
+                         ? 0.7
+                         : (langDelegate.modelData.group === "recent" ? 0.62 : 1.0)
                 font: langDelegate.font
                 elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter

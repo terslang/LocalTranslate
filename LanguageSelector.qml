@@ -15,7 +15,7 @@ import QtQuick.Controls.FluentWinUI3
 // The list is built from three groups, and every language appears in exactly
 // one of them:
 //
-//   1. Pinned     - starred by the user, always visible
+//   1. Pinned     - pinned by the user, always visible
 //   2. Recent     - last few used, excluding pinned and the current selection
 //   3. All other  - the remainder, collapsed by default
 //
@@ -35,7 +35,7 @@ ComboBox {
     // Recently-used language codes, most recent first.
     property var recentCodes: []
 
-    // Emitted when the user stars/unstars a language. The caller persists it.
+    // Emitted when the user pins/unpins a language. The caller persists it.
     signal pinToggled(string code)
 
     textRole: "name"
@@ -269,7 +269,7 @@ ComboBox {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            // Star toggle. Clicking it pins/unpins without closing the popup,
+            // Pin toggle. Clicking it pins/unpins without closing the popup,
             // so several languages can be pinned in one go.
             AbstractButton {
                 id: pinButton
@@ -279,7 +279,7 @@ ComboBox {
                 implicitHeight: 20
                 visible: !langDelegate.isToggle
 
-                // Unpinned languages only reveal the star on hover, to keep the
+                // Unpinned languages only reveal the pin on hover, to keep the
                 // list from looking like a wall of icons.
                 opacity: langDelegate.modelData.pinned
                          ? 1.0
@@ -294,7 +294,11 @@ ComboBox {
                 ToolTip.delay: 300
 
                 contentItem: Text {
-                    text: langDelegate.modelData.pinned ? "\u2605" : "\u2606"
+                    // U+1F588 is a text-presentation pushpin, so it inherits
+                    // `color` instead of rendering as a colour emoji the way
+                    // U+1F4CC would. Unpinned rows use the same glyph and lean
+                    // on opacity alone, so the icon never shifts position.
+                    text: "\u{1F588}\u{FE0E}"
                     color: langDelegate.palette.text
                     font.pixelSize: langDelegate.font.pixelSize + 2
                     horizontalAlignment: Text.AlignHCenter

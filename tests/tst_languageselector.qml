@@ -168,7 +168,7 @@ TestCase {
     // Opens the popup and drives a real delegate. The delegate cannot reach
     // the enclosing component when the QML is loaded from compiled resources,
     // so this covers the wiring that plain property checks miss.
-    function test_star_reports_the_language_to_pin() {
+    function test_pin_button_reports_the_language_to_pin() {
         const selector = createSelector(["hu"], ["fr"], "en")
         let pinned = ""
         selector.pinToggled.connect(code => pinned = code)
@@ -184,7 +184,7 @@ TestCase {
 
         row.contentItem.children[1].clicked()
         compare(pinned, selector.rows[0].code,
-                "the star reports the language on its own row")
+                "the pin button reports the language on its own row")
         selector.popup.close()
     }
 

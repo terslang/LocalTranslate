@@ -307,16 +307,22 @@ ComboBox {
         width: view ? view.width : implicitWidth
         highlighted: ListView.isCurrentItem
 
-        // Divider above the first row of each group.
-        topPadding: modelData.divider ? 5 : 4
+        // Divider above the first row of each group. The fade on the recent
+        // rows is a hint, not a boundary - the line is what actually separates
+        // the groups - so it gets real space around it and a colour that stays
+        // visible against the popup background, which `palette.mid` did not.
+        topPadding: modelData.divider ? 9 : 4
 
         Rectangle {
             visible: langDelegate.modelData.divider
             anchors.top: parent.top
+            anchors.topMargin: 4
             anchors.left: parent.left
+            anchors.leftMargin: 2
             anchors.right: parent.right
+            anchors.rightMargin: 2
             height: 1
-            color: langDelegate.palette.mid
+            color: Qt.alpha(langDelegate.palette.text, 0.25)
         }
 
         contentItem: Item {

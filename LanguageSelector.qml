@@ -41,11 +41,10 @@ ComboBox {
     textRole: "name"
     valueRole: "code"
 
-    // Editable so the list can be narrowed by typing. The field is not a free
-    // text input - it only ever filters - so it shows the selected language
-    // when idle and is cleared for typing as soon as the popup opens.
-    editable: true
-    selectTextByMouse: true
+    // Deliberately NOT editable. The keys are handled directly (see below) and
+    // the control's label shows the query while one is being typed, so there is
+    // no text field - and so no completer to rewrite what was typed, and no
+    // caret inviting free-text entry into what is only ever a filter.
 
 
     // `aboutToShow`/`aboutToHide` belong to the popup, not the ComboBox.
@@ -53,35 +52,50 @@ ComboBox {
         target: selector.popup
 
         function onAboutToShow() {
-            // Each time the popup opens: no filter and nothing expanded. The
-            // edit field is focused with its text selected so that typing
-            // starts filtering straight away, without a click into the field.
+            // Each time the popup opens: no filter, nothing expanded, and
+            // the control focused so that typing filters straight away -
+            // opening the list with the mouse must not leave the keys
+            // going nowhere.
             selector.filter = ""
             selector.otherExpanded = false
-            selector.focusEditField()
+            selector.forceActiveFocus()
         }
 
         function onAboutToHide() {
             selector.filter = ""
-            selector.resetEditText()
         }
     }
 
-    // Typing narrows the list; the text is a filter, never a new language.
+    // Typing narrows the list.
     //
-    // The filter is driven from the edit field's own text rather than from
-    // `onEditTextChanged`, because rebuilding the model moves `currentIndex`
-    // and an editable ComboBox writes the new current row's name back into
-    // `editText` - feeding that back would overwrite the filter with a
-    // language name and match everything again. `displayText` is what the
-    // field shows when idle, so comparing against it distinguishes a real
-    // keystroke from that write-back.
-    Connections {
-        target: selector.editField
-        enabled: selector.editField !== null
+    // The query is tracked here rather than read back from the text field: an
+    // editable ComboBox runs a completer that rewrites the field to the first
+    // matching entry on every keystroke, so typing "g" turns the field into
+    // "German". Reading the field would feed that name back as the query and
+    // search for the completion instead of for what was typed.
+    //
+    // So keys are intercepted before the completer sees them, and the field is
+    // driven from the query instead of the other way round.
+    Keys.onPressed: (event) => {
+        if (!selector.popup.opened) {
+            // Let the ComboBox handle its own open/navigate keys.
+            event.accepted = false
+            return
+        }
 
-        function onTextEdited() {
-            selector.filter = selector.editField.text
+        if (event.key === Qt.Key_Backspace) {
+            selector.filter = selector.filter.slice(0, -1)
+            event.accepted = true
+        } else if (event.key === Qt.Key_Escape && selector.searching) {
+            // Escape clears the query first, and only closes on a second press.
+            selector.filter = ""
+            event.accepted = true
+        } else if (event.text.length === 1 && event.text >= " ") {
+            selector.filter += event.text
+            event.accepted = true
+        } else {
+            // Arrows, Return, Escape on an empty query: the ComboBox's job.
+            event.accepted = false
         }
     }
 
@@ -224,29 +238,11 @@ ComboBox {
     readonly property var currentLanguage: allLanguages.find(
                                                lang => lang.code === selectedCode) ?? null
     readonly property string currentName: currentLanguage ? currentLanguage.name : ""
-    displayText: currentName
 
-    // An editable ComboBox keeps whatever was typed in its field, so put the
-    // selected language back once the filtering is over. This runs on close
-    // and whenever the selection changes, which also covers the popup being
-    // dismissed without a choice.
-    // The editable ComboBox's contentItem is the TextField holding `editText`.
-    // It is declared as a plain Item, so it is reached through a typed alias
-    // rather than by calling straight through the untyped property.
-    readonly property TextInput editField: contentItem as TextInput
-
-    function focusEditField() {
-        if (!editField)
-            return
-        editField.forceActiveFocus()
-        editField.selectAll()
-    }
-
-    function resetEditText() {
-        if (editText !== currentName)
-            editText = currentName
-    }
-    onCurrentNameChanged: resetEditText()
+    // The control shows the query while one is being typed, so there is
+    // feedback for the keystrokes, and the selected language the rest of the
+    // time.
+    displayText: searching ? filter : currentName
 
     // Keep the highlighted row in step with the selected language. Assigning
     // currentIndex has no effect on `selectedCode`, so this cannot loop.
@@ -259,11 +255,7 @@ ComboBox {
     // `activated`, which also fires for the disclosure row.
     signal languageSelected(string code)
 
-    Component.onCompleted: {
-        if (selectedRow >= 0)
-            currentIndex = selectedRow
-        resetEditText()
-    }
+    Component.onCompleted: if (selectedRow >= 0) currentIndex = selectedRow
 
     // The disclosure row is not a language: activating it expands the group
     // and restores the previous selection rather than selecting the row.
@@ -310,8 +302,8 @@ ComboBox {
 
         // Divider above the first row of each group. The fade on the recent
         // rows is a hint, not a boundary - the line is what actually separates
-        // the groups - so it gets real space around it and a colour that stays
-        // visible against the popup background, which `palette.mid` did not.
+        // the groups - so it gets real space above and below it and a colour
+        // that stays visible against the popup background.
         topPadding: modelData.divider ? 9 : 4
 
         Rectangle {

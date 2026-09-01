@@ -25,5 +25,8 @@ add_test(NAME qml_tests
          COMMAND qml_tests -input ${CMAKE_CURRENT_SOURCE_DIR}
                            -import ${CMAKE_CURRENT_BINARY_DIR}/qml)
 
+# Some tests send real key events, which the offscreen platform does not
+# deliver to a window - it never activates one. The vnc platform is headless
+# too but has a real window system underneath, so keyboard input works.
 set_tests_properties(qml_tests PROPERTIES
-                     ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+                     ENVIRONMENT "QT_QPA_PLATFORM=vnc")

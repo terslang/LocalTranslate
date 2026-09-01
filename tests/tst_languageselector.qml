@@ -224,25 +224,72 @@ TestCase {
         compare(languageCodes(selector), ["pt"], "and is still found by typing")
     }
 
-    // The edit field is a filter box, not a text input: it shows the selected
-    // language when idle and is restored once the search is over.
-    function test_edit_field_returns_to_the_selected_language() {
+    // Real keystrokes, which is the path the Keys handler actually sees: the
+    // property-level tests above cannot catch a control that never receives
+    // the keys, or one whose label does not show what was typed.
+    function test_typing_filters_the_list() {
         const selector = createSelector(["hu"], ["fr"], "en")
-        compare(selector.editText, "English")
+        compare(selector.displayText, "English", "the selection shows when idle")
 
         selector.popup.open()
         tryVerify(() => selector.popup.opened)
+        verify(selector.activeFocus, "opening the popup focuses the control")
 
-        // Typing goes through the field's own signal, as a keystroke would.
-        selector.editField.text = "ger"
-        selector.editField.textEdited()
-        tryVerify(() => selector.filter === "ger")
+        keyClick(Qt.Key_G, Qt.NoModifier, 50, selector)
+        compare(selector.filter, "g", "the keystroke reaches the filter")
+        compare(selector.displayText, "g", "and the control shows the query")
+
+        keyClick(Qt.Key_E, Qt.NoModifier, 50, selector)
+        keyClick(Qt.Key_R, Qt.NoModifier, 50, selector)
+        compare(selector.filter, "ger")
+        compare(languageCodes(selector), ["de"], "only German is left")
+
+        keyClick(Qt.Key_Backspace, Qt.NoModifier, 50, selector)
+        compare(selector.filter, "ge", "backspace widens the query")
 
         selector.popup.close()
         tryVerify(() => !selector.popup.opened)
         compare(selector.filter, "", "closing clears the search")
-        compare(selector.editText, "English",
-                "the field shows the selection again, not the query")
+        compare(selector.displayText, "English",
+                "the label shows the selection again, not the query")
+    }
+
+    // Escape is a two-step: clear the query, then close. Closing on the first
+    // press would throw away the search on a typo.
+    function test_escape_clears_the_query_before_closing() {
+        const selector = createSelector(["hu"], ["fr"], "en")
+        selector.popup.open()
+        tryVerify(() => selector.popup.opened)
+
+        keyClick(Qt.Key_G, Qt.NoModifier, 50, selector)
+        compare(selector.filter, "g")
+
+        keyClick(Qt.Key_Escape, Qt.NoModifier, 50, selector)
+        compare(selector.filter, "", "the query is cleared")
+        verify(selector.popup.opened, "and the popup is still open")
+        verify(!selector.showOther, "with the collapsed grouping back")
+
+        selector.popup.close()
+        tryVerify(() => !selector.popup.opened)
+    }
+
+    // A search result is picked with Return like any other row.
+    function test_search_result_can_be_selected() {
+        const selector = createSelector(["hu"], ["fr"], "en")
+        selector.popup.open()
+        tryVerify(() => selector.popup.opened)
+
+        keyClick(Qt.Key_J, Qt.NoModifier, 50, selector)
+        compare(languageCodes(selector), ["ja"])
+
+        let picked = ""
+        selector.languageSelected.connect(code => picked = code)
+        keyClick(Qt.Key_Return, Qt.NoModifier, 50, selector)
+        tryVerify(() => !selector.popup.opened)
+
+        compare(picked, "ja", "return picks the match")
+        compare(selector.selectedCode, "ja")
+        compare(selector.displayText, "Japanese", "and the query is gone")
     }
 
     // The delegate cannot reach the enclosing component when the QML is

@@ -5,7 +5,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Window
 import QtQuick.Controls.FluentWinUI3
 
 // A language ComboBox that surfaces pinned and recently-used languages above
@@ -205,24 +204,6 @@ ComboBox {
             }
         }
     }
-
-    // The list can grow tall enough that the style would flip it above the
-    // control to fit, which covers the app header. The chevron on the control
-    // points down, so the popup always opens down: pin it below the control and
-    // cap its height at the room left underneath, letting it scroll instead.
-    popup.y: selector.height
-
-    // Room between the bottom of the control and the bottom of the window.
-    // Guarded because the selector has no window until it is shown, and
-    // because a very short window would otherwise ask for a negative height.
-    readonly property real roomBelow: {
-        if (!selector.Window.window)
-            return 0
-        const top = selector.mapToItem(null, 0, selector.height).y
-        return Math.max(0, selector.Window.height - top - 8)
-    }
-    popup.height: roomBelow > 0 ? Math.min(popup.implicitHeight, roomBelow)
-                                : popup.implicitHeight
 
     delegate: ItemDelegate {
         id: langDelegate

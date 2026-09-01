@@ -69,7 +69,7 @@ TestCase {
 
     function test_recents_follow_pinned() {
         const selector = createSelector(["de"], ["fr", "es"], "en")
-        selector.otherExpansion = "expanded"
+        selector.otherExpanded = true
 
         compare(selector.recentLanguages.map(lang => lang.code), ["fr", "es"])
         compare(languageCodes(selector).slice(0, 3), ["de", "fr", "es"])
@@ -102,7 +102,13 @@ TestCase {
 
         compare(selector.recentLanguages.map(lang => lang.code), ["fr"],
                 "codes with no matching language are dropped")
-        compare(languageCodes(selector).length, languages.length)
+
+        // The bogus pin is dropped too, so only the recent language is lifted
+        // out of the collapsed group.
+        compare(languageCodes(selector), ["fr"])
+        selector.otherExpanded = true
+        compare(languageCodes(selector).length, languages.length,
+                "every real language is still reachable")
     }
 
     function test_every_language_is_listed_exactly_once() {
@@ -117,7 +123,7 @@ TestCase {
         for (const testData of cases) {
             const selector = createSelector(testData.pinned, testData.recent,
                                             testData.selected)
-            selector.otherExpansion = "expanded"
+            selector.otherExpanded = true
 
             const codes = languageCodes(selector)
             const label = JSON.stringify(testData)
@@ -138,27 +144,105 @@ TestCase {
         compare(languageCodes(selector).length, languages.length)
     }
 
-    function test_group_opens_when_it_holds_the_selection() {
+    // The group used to auto-expand whenever it held the selection. That made
+    // the popup taller than the window on open, which left the style no room
+    // to drop it below the control, so it was centred over the app header
+    // instead. Searching replaces that convenience.
+    function test_group_stays_collapsed_even_when_it_holds_the_selection() {
         // Portuguese is neither pinned nor recent, so it lives in "All other".
         const selector = createSelector(["de", "hu"], [], "pt")
 
-        verify(selector.otherHoldsSelection)
-        verify(selector.showOther, "the selection is never hidden in a collapsed group")
-
-        // The user can still collapse it from there.
-        selector.toggleOther()
-        verify(!selector.showOther, "an explicit collapse wins over auto-expansion")
+        verify(!selector.showOther,
+               "the group stays collapsed so the popup stays short")
+        compare(languageCodes(selector), ["de", "hu"],
+                "only the pinned languages are listed")
     }
 
-    function test_expansion_returns_to_automatic_once_the_selection_moves_out() {
-        const selector = createSelector(["de", "hu"], [], "pt")
+    function test_each_popup_starts_collapsed_again() {
+        const selector = createSelector(["de", "hu"], [], "de")
         selector.toggleOther()
-        verify(!selector.showOther)
+        verify(selector.showOther, "expanded by hand")
 
-        selector.selectByCode("de")
-        compare(selector.otherExpansion, "auto",
-                "the next popup starts collapsed again")
-        verify(!selector.showOther)
+        selector.popup.open()
+        tryVerify(() => selector.popup.opened)
+        verify(!selector.showOther, "opening the popup collapses the group again")
+        selector.popup.close()
+    }
+
+    // Typing narrows the whole list, which is what makes a collapsed "All
+    // other" group acceptable: an unlisted language is found by searching
+    // rather than by expanding and scrolling.
+    function test_search_matches_on_name_and_code() {
+        const selector = createSelector(["hu"], ["fr"], "en")
+
+        selector.filter = "ger"
+        verify(selector.searching)
+        compare(languageCodes(selector), ["de"], "matched on the name")
+
+        selector.filter = "de"
+        compare(languageCodes(selector), ["de"], "matched on the code")
+
+        // Matching anywhere in the name, not just at the start.
+        selector.filter = "nese"
+        compare(languageCodes(selector), ["ja"])
+
+        // Case is irrelevant.
+        selector.filter = "SPAN"
+        compare(languageCodes(selector), ["es"])
+
+        selector.filter = "zzz"
+        compare(languageCodes(selector), [], "no matches is an empty list")
+    }
+
+    // While searching, the groups are set aside: pinned and recent are ways of
+    // not having to search, so they only get in the way of reading results.
+    function test_search_replaces_the_grouping() {
+        const selector = createSelector(["hu"], ["fr"], "en")
+
+        selector.filter = "a"
+        compare(selector.rows.filter(row => row.kind === "toggle").length, 0,
+                "no disclosure row while searching")
+        verify(selector.rows.every(row => row.group === "match"),
+               "every result is tagged as a match")
+
+        // Clearing the query restores the collapsed grouping.
+        selector.filter = ""
+        verify(!selector.searching)
+        verify(!selector.showOther, "the group is collapsed again")
+        verify(selector.rows.some(row => row.kind === "toggle"),
+               "the disclosure row is back")
+    }
+
+    // Searching shows results whether or not the group was expanded, so a
+    // match in "All other" is reachable without expanding anything.
+    function test_search_finds_languages_inside_the_collapsed_group() {
+        const selector = createSelector(["hu"], ["fr"], "en")
+        verify(!selector.showOther, "Portuguese is hidden in the collapsed group")
+        compare(languageCodes(selector).indexOf("pt"), -1)
+
+        selector.filter = "port"
+        compare(languageCodes(selector), ["pt"], "and is still found by typing")
+    }
+
+    // The edit field is a filter box, not a text input: it shows the selected
+    // language when idle and is restored once the search is over.
+    function test_edit_field_returns_to_the_selected_language() {
+        const selector = createSelector(["hu"], ["fr"], "en")
+        compare(selector.editText, "English")
+
+        selector.popup.open()
+        tryVerify(() => selector.popup.opened)
+
+        // Typing goes through the field's own signal, as a keystroke would.
+        selector.editField.text = "ger"
+        selector.editField.textEdited()
+        tryVerify(() => selector.filter === "ger")
+
+        selector.popup.close()
+        tryVerify(() => !selector.popup.opened)
+        compare(selector.filter, "", "closing clears the search")
+        compare(selector.editText, "English",
+                "the field shows the selection again, not the query")
     }
 
     // The delegate cannot reach the enclosing component when the QML is
@@ -192,7 +276,7 @@ TestCase {
     // delegate fade the recent rows without reaching outside itself.
     function test_rows_carry_their_group() {
         const selector = createSelector(["hu"], ["fr", "de"], "en")
-        selector.otherExpansion = "expanded"
+        selector.otherExpanded = true
 
         const groupOf = code => selector.rows.find(
                                     row => row.code === code).group

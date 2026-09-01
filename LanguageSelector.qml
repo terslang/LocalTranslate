@@ -40,7 +40,69 @@ ComboBox {
     textRole: "name"
     valueRole: "code"
 
+    // Editable so the list can be narrowed by typing. The field is not a free
+    // text input - it only ever filters - so it shows the selected language
+    // when idle and is cleared for typing as soon as the popup opens.
+    editable: true
+    selectTextByMouse: true
+
+
+    // `aboutToShow`/`aboutToHide` belong to the popup, not the ComboBox.
+    Connections {
+        target: selector.popup
+
+        function onAboutToShow() {
+            // Each time the popup opens: no filter and nothing expanded. The
+            // edit field is focused with its text selected so that typing
+            // starts filtering straight away, without a click into the field.
+            selector.filter = ""
+            selector.otherExpanded = false
+            selector.focusEditField()
+        }
+
+        function onAboutToHide() {
+            selector.filter = ""
+            selector.resetEditText()
+        }
+    }
+
+    // Typing narrows the list; the text is a filter, never a new language.
+    //
+    // The filter is driven from the edit field's own text rather than from
+    // `onEditTextChanged`, because rebuilding the model moves `currentIndex`
+    // and an editable ComboBox writes the new current row's name back into
+    // `editText` - feeding that back would overwrite the filter with a
+    // language name and match everything again. `displayText` is what the
+    // field shows when idle, so comparing against it distinguishes a real
+    // keystroke from that write-back.
+    Connections {
+        target: selector.editField
+        enabled: selector.editField !== null
+
+        function onTextEdited() {
+            selector.filter = selector.editField.text
+        }
+    }
+
     readonly property int maxRecent: 3
+
+    // What the user has typed to narrow the list. While it is non-empty the
+    // grouping is set aside and the popup shows plain search results, because
+    // "pinned" and "recent" are ways of not having to search.
+    property string filter: ""
+    readonly property bool searching: filter.length > 0
+
+    // Matches on the language name and on the code, so both "ger" and "de"
+    // find German. Case-insensitive, and matched anywhere in the name so
+    // "nese" still finds Japanese.
+    function matchesFilter(lang) {
+        const needle = filter.toLowerCase()
+        return lang.name.toLowerCase().includes(needle)
+                || lang.code.toLowerCase().startsWith(needle)
+    }
+
+    readonly property var matchingLanguages: allLanguages.filter(
+                                                 lang => matchesFilter(lang))
 
     function isPinned(code) {
         return pinnedCodes.includes(code)
@@ -71,30 +133,17 @@ ComboBox {
     readonly property bool grouped: pinnedLanguages.length > 0
                                     || recentLanguages.length > 0
 
-    // Whether the "All other" group is expanded. It starts collapsed, but
-    // opens on its own while it holds the current selection, so opening the
-    // popup never hides where you are. The user can still collapse it from
-    // there, hence a tri-state rather than a plain boolean: "auto" defers to
-    // the selection, while an explicit choice wins until the selection moves
-    // back out of the group.
-    property string otherExpansion: "auto"   // "auto" | "expanded" | "collapsed"
-    readonly property bool otherHoldsSelection: otherLanguages.some(
-                                                    lang => lang.code === selectedCode)
-    readonly property bool showOther: {
-        if (!grouped)
-            return true
-        if (otherExpansion !== "auto")
-            return otherExpansion === "expanded"
-        return otherHoldsSelection
-    }
+    // Whether the "All other" group is expanded. It always starts collapsed:
+    // an expanded list of every language is taller than the window, which
+    // leaves the style no room to drop the popup below the control. Typing
+    // filters the whole list, so a collapsed group no longer hides anything -
+    // searching, not scrolling, is how you reach an unlisted language.
+    property bool otherExpanded: false
+    readonly property bool showOther: !grouped || otherExpanded || searching
 
     function toggleOther() {
-        otherExpansion = showOther ? "collapsed" : "expanded"
+        otherExpanded = !otherExpanded
     }
-
-    // Once the selection leaves the group, drop back to automatic behaviour so
-    // the next popup starts collapsed again.
-    onOtherHoldsSelectionChanged: if (!otherHoldsSelection) otherExpansion = "auto"
 
     // Rows are tagged so one delegate can render both languages and the
     // "All other" disclosure row. Everything a row needs to draw itself is
@@ -121,6 +170,12 @@ ComboBox {
             divider: divider,
             actions: rowActions
         })
+
+        // While searching, show the matches as one flat list: the groups only
+        // help when you are browsing, and splitting a handful of results
+        // across three headings makes them harder to scan, not easier.
+        if (searching)
+            return matchingLanguages.map(lang => languageRow(lang, "match", false))
 
         if (!grouped)
             return allLanguages.map(lang => languageRow(lang, "other", false))
@@ -167,7 +222,30 @@ ComboBox {
 
     readonly property var currentLanguage: allLanguages.find(
                                                lang => lang.code === selectedCode) ?? null
-    displayText: currentLanguage ? currentLanguage.name : ""
+    readonly property string currentName: currentLanguage ? currentLanguage.name : ""
+    displayText: currentName
+
+    // An editable ComboBox keeps whatever was typed in its field, so put the
+    // selected language back once the filtering is over. This runs on close
+    // and whenever the selection changes, which also covers the popup being
+    // dismissed without a choice.
+    // The editable ComboBox's contentItem is the TextField holding `editText`.
+    // It is declared as a plain Item, so it is reached through a typed alias
+    // rather than by calling straight through the untyped property.
+    readonly property TextInput editField: contentItem as TextInput
+
+    function focusEditField() {
+        if (!editField)
+            return
+        editField.forceActiveFocus()
+        editField.selectAll()
+    }
+
+    function resetEditText() {
+        if (editText !== currentName)
+            editText = currentName
+    }
+    onCurrentNameChanged: resetEditText()
 
     // Keep the highlighted row in step with the selected language. Assigning
     // currentIndex has no effect on `selectedCode`, so this cannot loop.
@@ -180,7 +258,11 @@ ComboBox {
     // `activated`, which also fires for the disclosure row.
     signal languageSelected(string code)
 
-    Component.onCompleted: if (selectedRow >= 0) currentIndex = selectedRow
+    Component.onCompleted: {
+        if (selectedRow >= 0)
+            currentIndex = selectedRow
+        resetEditText()
+    }
 
     // The disclosure row is not a language: activating it expands the group
     // and restores the previous selection rather than selecting the row.

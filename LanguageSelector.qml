@@ -5,7 +5,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Shapes
 import QtQuick.Controls.FluentWinUI3
 
 // A language ComboBox that surfaces pinned and recently-used languages above
@@ -363,52 +362,18 @@ ComboBox {
                                                             : qsTr("Pin language")
                 ToolTip.delay: 300
 
-                // The pin is drawn rather than set as text: the pushpin
-                // codepoints are either missing from the UI font (U+1F588
-                // renders as tofu) or are colour emoji that ignore the
-                // palette (U+1F4CC), and which of those applies depends on
-                // the fonts installed. A shape always renders and always
-                // takes the text colour.
-                contentItem: Item {
-                    id: pinIcon
-
-                    // Filled when pinned, outline when not.
-                    readonly property bool filled: langDelegate.modelData.pinned
-                    readonly property color stroke: langDelegate.palette.text
-
-                    Shape {
-                        anchors.centerIn: parent
-                        width: 14
-                        height: 14
-                        preferredRendererType: Shape.CurveRenderer
-
-                        // A pin seen from the side: round head, tapering body,
-                        // and a needle pointing down-left.
-                        ShapePath {
-                            fillColor: pinIcon.filled ? pinIcon.stroke : "transparent"
-                            strokeColor: pinIcon.stroke
-                            strokeWidth: 1.2
-                            capStyle: ShapePath.RoundCap
-                            joinStyle: ShapePath.RoundJoin
-
-                            // Head and body.
-                            PathAngleArc {
-                                centerX: 8.5; centerY: 5.5
-                                radiusX: 4.2; radiusY: 4.2
-                                startAngle: 20; sweepAngle: 300
-                            }
-                        }
-
-                        // The needle, always a stroke so the pin reads as a pin
-                        // even when the head is hollow.
-                        ShapePath {
-                            strokeColor: pinIcon.stroke
-                            strokeWidth: 1.4
-                            capStyle: ShapePath.RoundCap
-                            startX: 6.2; startY: 8.6
-                            PathLine { x: 2.2; y: 12.8 }
-                        }
-                    }
+                // U+1F4CC is a colour emoji, so it keeps its own pin colours
+                // rather than taking `palette.text` - which is what makes it
+                // unmistakably a pin. It must be used bare: the
+                // text-presentation selector (VS15) has no glyph and would
+                // render as an empty box, as the monochrome pushpin at
+                // U+1F588 does. Pinned and unpinned rows differ by opacity
+                // alone, so the icon never changes shape or shifts position.
+                contentItem: Text {
+                    text: "\u{1F4CC}"
+                    font.pixelSize: langDelegate.font.pixelSize
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
             }
         }

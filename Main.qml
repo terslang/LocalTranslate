@@ -162,8 +162,8 @@ ApplicationWindow {
         columnSpacing: 4
         anchors.margins: 8
 
-        columns: isLandscape ? 3 : 1
-        rows: isLandscape ? 1 : 3
+        columns: window.isLandscape ? 3 : 1
+        rows: window.isLandscape ? 1 : 3
 
         // === SOURCE FRAME ===
         Frame {
@@ -174,8 +174,8 @@ ApplicationWindow {
 
             // If landscape => row=0, col=0
             // If portrait  => row=0, col=0
-            Layout.row: isLandscape ? 0 : 0
-            Layout.column: isLandscape ? 0 : 0
+            Layout.row: window.isLandscape ? 0 : 0
+            Layout.column: window.isLandscape ? 0 : 0
 
             contentItem: Item {
                 anchors.fill: parent
@@ -291,8 +291,8 @@ ApplicationWindow {
                     Button {
                         id: pasteButton
                         icon.source: "qrc:/images/paste.png"
-                        width: 28
-                        height: 28
+                        Layout.preferredWidth: 28
+                        Layout.preferredHeight: 28
                         font.pixelSize: 12
                         onClicked: {
                             sourceText.paste()
@@ -307,8 +307,8 @@ ApplicationWindow {
                     Button {
                         id: translateButton
                         text: qsTr("Translate")
-                        width: 80
-                        height: 28
+                        Layout.preferredWidth: 80
+                        Layout.preferredHeight: 28
                         highlighted: true
                         font.pixelSize: 12
                         font.bold: true
@@ -326,11 +326,11 @@ ApplicationWindow {
         Button {
             id: swapButton
 
-            icon.source: isLandscape ? "qrc:/images/arrow-left-right.png" : "qrc:/images/arrow-down-up.png"
+            icon.source: window.isLandscape ? "qrc:/images/arrow-left-right.png" : "qrc:/images/arrow-down-up.png"
             // If landscape => row=0, col=1
             // If portrait  => row=1, col=0
-            Layout.row: isLandscape ? 0 : 1
-            Layout.column: isLandscape ? 1 : 0
+            Layout.row: window.isLandscape ? 0 : 1
+            Layout.column: window.isLandscape ? 1 : 0
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             Layout.preferredWidth: window.isLandscape ? 40 : implicitWidth
             Layout.preferredHeight: window.isLandscape ? 40 : implicitHeight
@@ -373,8 +373,8 @@ ApplicationWindow {
 
             // If landscape => row=0, col=2
             // If portrait  => row=2, col=0
-            Layout.row: isLandscape ? 0 : 2
-            Layout.column: isLandscape ? 2 : 0
+            Layout.row: window.isLandscape ? 0 : 2
+            Layout.column: window.isLandscape ? 2 : 0
 
             contentItem: Item {
                 anchors.fill: parent

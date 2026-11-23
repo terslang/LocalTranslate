@@ -28,13 +28,21 @@ qt_add_executable(localtranslate
 qt_add_qml_module(localtranslate
     URI LocalTranslate
     VERSION 1.0
-    QML_FILES Main.qml
+    QML_FILES Main.qml LanguageSelector.qml
     RESOURCES config.hpp.in
     SOURCES translation_bridge.hpp
     SOURCES translation_bridge.cpp
 )
 
 target_include_directories(localtranslate PRIVATE ${LocalTranslate_BINARY_DIR}/config)
+
+# QML tests, off by default so the normal build needs no extra Qt components.
+# Enable with -DBUILD_TESTING=ON, then run with ctest.
+option(BUILD_TESTING "Build the QML tests" OFF)
+if(BUILD_TESTING)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
 
 set_target_properties(localtranslate PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

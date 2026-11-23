@@ -291,8 +291,6 @@ ApplicationWindow {
                     Button {
                         id: pasteButton
                         icon.source: "qrc:/images/paste.png"
-                        Layout.preferredWidth: 28
-                        Layout.preferredHeight: 28
                         font.pixelSize: 12
                         onClicked: {
                             sourceText.paste()
